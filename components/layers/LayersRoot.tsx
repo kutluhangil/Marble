@@ -3,22 +3,54 @@
 import { useLayersStore } from '@/store/useLayersStore';
 import { useDataStore } from '@/store/useDataStore';
 import type { GeoPoint } from '@/lib/data/types';
-import GlowLayer, { type GlowConfig } from './GlowLayer';
-import WeatherLayer from './WeatherLayer';
+import IconLayer from './IconLayer';
+import SeismicLayer from './SeismicLayer';
 import ISSLayer from './ISSLayer';
-import SeismicRings from './SeismicRings';
 import FocusPlume from './FocusPlume';
+import { ICON } from '@/lib/icons/atlas';
 
-// Each layer has a distinct colour + motion identity.
-const QUAKE: GlowConfig = { color: '#ff3b30', speed: 2.2, pulse: 0.22, size: 0.009, emissive: 1.6 };
-const VOLCANO: GlowConfig = { color: '#ef4444', speed: 1.1, pulse: 0.14, size: 0.014, emissive: 1.5 };
-const FIRE: GlowConfig = { color: '#f97316', speed: 7, pulse: 0.25, size: 0.011, emissive: 1.6 };
-const FLIGHT: GlowConfig = { color: '#57534e', speed: 0, pulse: 0, size: 0.008, emissive: 0.9 };
+type RGB = [number, number, number];
 
-const quakeSize = (p: GeoPoint) => 0.7 + (p.magnitude ?? 0) * 0.18;
-const quakeIntensity = (p: GeoPoint) => Math.min(1, (p.magnitude ?? 0) / 8);
+function weatherCell(p: GeoPoint): number {
+  const c = (p.meta.weatherCode as number | null) ?? null;
+  if (c == null) return ICON.cloud;
+  if (c <= 1) return ICON.sun;
+  if (c <= 3) return ICON.cloud;
+  if (c === 45 || c === 48) return ICON.fog;
+  if ([71, 73, 75, 77, 85, 86].includes(c)) return ICON.snow;
+  if (c >= 95) return ICON.storm;
+  return ICON.rain;
+}
+function weatherTint(p: GeoPoint): RGB {
+  switch (weatherCell(p)) {
+    case ICON.sun:
+      return [0.96, 0.62, 0.12];
+    case ICON.rain:
+      return [0.22, 0.6, 0.9];
+    case ICON.storm:
+      return [0.5, 0.45, 0.95];
+    case ICON.snow:
+      return [0.7, 0.85, 0.96];
+    case ICON.fog:
+      return [0.68, 0.72, 0.78];
+    default:
+      return [0.55, 0.62, 0.7];
+  }
+}
 
-/** Active data layers, inside the spinning world group so markers stay pinned. */
+const VOLCANO_TINT: RGB = [0.9, 0.28, 0.2];
+const FIRE_TINT: RGB = [0.97, 0.45, 0.1];
+const FLIGHT_TINT: RGB = [0.42, 0.4, 0.36];
+
+const volcanoCell = () => ICON.volcano;
+const volcanoTint = () => VOLCANO_TINT;
+const fireCell = () => ICON.flame;
+const fireTint = () => FIRE_TINT;
+const flightCell = () => ICON.plane;
+const flightTint = () => FLIGHT_TINT;
+
+/** Active data layers, each with its own visual language, inside the spinning
+ *  world group so they stay pinned to geography. */
 export default function LayersRoot() {
   const active = useLayersStore((s) => s.active);
   const events = useDataStore((s) => s.events);
@@ -26,19 +58,39 @@ export default function LayersRoot() {
 
   return (
     <group>
-      {active.quake && (
-        <GlowLayer
-          points={events.quake}
-          config={QUAKE}
-          sizeBy={quakeSize}
-          intensityBy={quakeIntensity}
+      {active.quake && <SeismicLayer points={events.quake} />}
+      {active.weather && (
+        <IconLayer
+          points={events.weather}
+          cellFor={weatherCell}
+          tintFor={weatherTint}
+          size={0.06}
         />
       )}
-      {active.quake && <SeismicRings />}
-      {active.weather && <WeatherLayer points={events.weather} />}
-      {active.flight && <GlowLayer points={events.flight} config={FLIGHT} />}
-      {active.volcano && <GlowLayer points={events.volcano} config={VOLCANO} />}
-      {active.fire && <GlowLayer points={events.fire} config={FIRE} />}
+      {active.flight && (
+        <IconLayer
+          points={events.flight}
+          cellFor={flightCell}
+          tintFor={flightTint}
+          size={0.05}
+        />
+      )}
+      {active.volcano && (
+        <IconLayer
+          points={events.volcano}
+          cellFor={volcanoCell}
+          tintFor={volcanoTint}
+          size={0.07}
+        />
+      )}
+      {active.fire && (
+        <IconLayer
+          points={events.fire}
+          cellFor={fireCell}
+          tintFor={fireTint}
+          size={0.06}
+        />
+      )}
       {active.iss && iss && <ISSLayer point={iss} />}
       <FocusPlume />
     </group>
