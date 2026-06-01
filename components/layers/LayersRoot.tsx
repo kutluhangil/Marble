@@ -3,6 +3,7 @@
 import { useLayersStore } from '@/store/useLayersStore';
 import { useDataStore } from '@/store/useDataStore';
 import PointLayer from './PointLayer';
+import QuakeRings from './QuakeRings';
 import ISSMarker from './ISSMarker';
 import OrbitPath from './OrbitPath';
 
@@ -16,6 +17,7 @@ export default function LayersRoot() {
   return (
     <group>
       {active.quake && <PointLayer points={events.quake} layer="quake" />}
+      {active.quake && <QuakeRings />}
       {active.weather && <PointLayer points={events.weather} layer="weather" />}
       {active.flight && <PointLayer points={events.flight} layer="flight" />}
       {active.iss && iss && (
