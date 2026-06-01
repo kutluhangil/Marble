@@ -16,6 +16,8 @@ export default function ISSMarker({ point }: { point: GeoPoint }) {
   const hover = useUIStore((s) => s.hover);
   const pos = useMemo(
     () => latLngToVector3(point.lat, point.lng, issRadius(point)),
+    // Recompute only on position change, not on every polled object identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [point.lat, point.lng, point.alt],
   );
 

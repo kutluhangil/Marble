@@ -22,11 +22,40 @@ const mono = JetBrains_Mono({
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
+const title = 'MARBLE — A Live Portrait of Earth';
+const description =
+  'Real-time earthquakes, the ISS, city weather, and flight traffic on a hyper-realistic, slowly rotating Earth. Built with Three.js and NASA imagery.';
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: 'MARBLE — A Live Portrait of Earth',
-  description:
-    'Real-time earthquakes, the ISS, city weather, and flight traffic on a hyper-realistic, slowly rotating Earth. Built with Three.js and NASA imagery.',
+  title,
+  description,
+  icons: { icon: '/favicon.svg' },
+  openGraph: {
+    title,
+    description,
+    url: siteUrl,
+    siteName: 'MARBLE',
+    type: 'website',
+    images: [{ url: '/og.png', width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title,
+    description,
+    images: ['/og.png'],
+  },
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'MARBLE',
+  description,
+  url: siteUrl,
+  applicationCategory: 'DataVisualization',
+  operatingSystem: 'Any',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 };
 
 export default function RootLayout({
@@ -39,7 +68,13 @@ export default function RootLayout({
       lang="en"
       className={`${display.variable} ${sans.variable} ${mono.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

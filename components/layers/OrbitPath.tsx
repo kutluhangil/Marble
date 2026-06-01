@@ -41,6 +41,8 @@ export default function OrbitPath({ point }: { point: GeoPoint }) {
       toneMapped: false,
     });
     return new LineLoop(geometry, material);
+    // Rebuild only when the orbit's position inputs change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [point.lng, point.alt]);
 
   useEffect(
