@@ -9,6 +9,7 @@ import LayerPills from './LayerPills';
 import LiveStats from './LiveStats';
 import StylePills from './StylePills';
 import TimeScrubber from './TimeScrubber';
+import GlobeActions from './GlobeActions';
 
 // WebGL is client-only; load the canvas without SSR.
 const Globe = dynamic(() => import('@/components/earth/Globe'), { ssr: false });
@@ -71,8 +72,9 @@ export default function Hero() {
         </div>
         <LayerPills />
         <LiveStats />
-        <div className="flex justify-center pt-1">
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
           <TimeScrubber />
+          <GlobeActions />
         </div>
       </div>
     </section>

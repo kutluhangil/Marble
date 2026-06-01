@@ -63,7 +63,11 @@ export default function Globe() {
     <Canvas
       camera={{ position: [0, 0, 3.2], fov: 35 }}
       dpr={[1, 2]}
-      gl={{ antialias: true, toneMapping: ACESFilmicToneMapping }}
+      gl={{
+        antialias: true,
+        toneMapping: ACESFilmicToneMapping,
+        preserveDrawingBuffer: true,
+      }}
     >
       <Suspense fallback={null}>
         <Lighting />

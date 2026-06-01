@@ -27,6 +27,7 @@ export interface Dict {
   footer: { tagline: string };
   style: { realistic: string; illustrated: string; atlas: string };
   time: { caption: string; now: string };
+  actions: { share: string; copied: string; screenshot: string };
   card: {
     layer: {
       quake: string;
@@ -93,6 +94,7 @@ const en: Dict = {
   footer: { tagline: 'A live portrait of Earth' },
   style: { realistic: 'Realistic', illustrated: 'Illustrated', atlas: 'Atlas' },
   time: { caption: 'Sun', now: 'now' },
+  actions: { share: 'Share', copied: 'Copied!', screenshot: 'Save PNG' },
   card: {
     layer: {
       quake: 'Earthquake',
@@ -174,6 +176,7 @@ const tr: Dict = {
   footer: { tagline: 'Dünya’nın canlı portresi' },
   style: { realistic: 'Gerçekçi', illustrated: 'İllüstrasyon', atlas: 'Atlas' },
   time: { caption: 'Güneş', now: 'şimdi' },
+  actions: { share: 'Paylaş', copied: 'Kopyalandı!', screenshot: 'PNG kaydet' },
   card: {
     layer: {
       quake: 'Deprem',
