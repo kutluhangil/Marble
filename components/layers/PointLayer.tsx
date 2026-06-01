@@ -54,9 +54,11 @@ export default function PointLayer({
     return m;
   }, [layer]);
 
+  // Grow markers in once on mount; later updates appear at full scale (no
+  // periodic blink when the data refreshes).
   useEffect(() => {
     spawn.current = 0;
-  }, [points]);
+  }, []);
 
   useEffect(
     () => () => {
