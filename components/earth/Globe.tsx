@@ -9,6 +9,8 @@ import Clouds from './Clouds';
 import Atmosphere from './Atmosphere';
 import Lighting from './Lighting';
 import ContactShadow from './ContactShadow';
+import LayersRoot from '@/components/layers/LayersRoot';
+import HoverTooltip from '@/components/layers/HoverTooltip';
 import { useGlobeStore } from '@/store/useGlobeStore';
 
 /** The spinning world group: Earth, clouds, and (later) data layers. */
@@ -38,6 +40,8 @@ export default function Globe() {
         <World>
           <Earth />
           <Clouds />
+          <LayersRoot />
+          <HoverTooltip />
         </World>
         <Atmosphere />
         <ContactShadow />
