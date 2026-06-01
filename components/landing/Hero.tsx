@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { hasWebGL } from '@/lib/utils/webgl';
+import { useT } from '@/lib/i18n/useT';
 import LayerPills from './LayerPills';
 import LiveStats from './LiveStats';
 
@@ -13,6 +14,7 @@ const Globe = dynamic(() => import('@/components/earth/Globe'), { ssr: false });
 const EASE = [0.16, 1, 0.3, 1];
 
 export default function Hero() {
+  const t = useT();
   const reduce = useReducedMotion();
   const [webgl, setWebgl] = useState(true);
 
@@ -28,7 +30,7 @@ export default function Hero() {
         transition={{ duration: 0.7, ease: EASE }}
         className="mx-auto max-w-3xl font-display text-3xl leading-tight tracking-display sm:text-4xl"
       >
-        A live portrait of Earth
+        {t.hero.title}
       </motion.h1>
 
       <motion.p
@@ -37,8 +39,7 @@ export default function Hero() {
         transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
         className="mx-auto mt-5 max-w-xl text-lg text-ink-soft"
       >
-        Real-time data on the most realistic planet you&rsquo;ve seen in a
-        browser.
+        {t.hero.subtitle}
       </motion.p>
 
       <motion.div
@@ -57,9 +58,7 @@ export default function Hero() {
               role="img"
               aria-label="Earth"
             />
-            <p className="text-sm text-ink-muted">
-              Your browser doesn&rsquo;t support WebGL — showing a still image.
-            </p>
+            <p className="text-sm text-ink-muted">{t.hero.noWebgl}</p>
           </div>
         )}
       </motion.div>

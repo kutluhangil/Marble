@@ -1,8 +1,10 @@
 'use client';
 
 import { useDataStore } from '@/store/useDataStore';
+import { useT } from '@/lib/i18n/useT';
 
 export default function LiveStats() {
+  const t = useT();
   const events = useDataStore((s) => s.events);
   const quakes = events.quake;
   const maxMag = quakes.reduce((m, q) => Math.max(m, q.magnitude ?? 0), 0);
@@ -12,9 +14,9 @@ export default function LiveStats() {
       ? Math.round(iss.meta.velocity)
       : null;
 
-  const parts: string[] = [`${quakes.length} quakes today`];
-  if (maxMag > 0) parts.push(`M${maxMag.toFixed(1)} max`);
-  if (issSpeed) parts.push(`ISS ${issSpeed.toLocaleString()} km/h`);
+  const parts: string[] = [t.stats.quakes(quakes.length)];
+  if (maxMag > 0) parts.push(t.stats.max(maxMag.toFixed(1)));
+  if (issSpeed) parts.push(t.stats.iss(issSpeed.toLocaleString()));
 
   return (
     <div className="flex items-center justify-center gap-3 font-mono text-xs text-ink-muted">
@@ -24,7 +26,7 @@ export default function LiveStats() {
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />
           <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-600" />
         </span>
-        live
+        {t.stats.live}
       </span>
     </div>
   );

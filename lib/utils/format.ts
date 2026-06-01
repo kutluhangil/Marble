@@ -1,13 +1,17 @@
-/** Compact relative time, e.g. "12m ago". */
-export function timeAgo(ms: number): string {
+/** Compact relative time, e.g. "12m ago" / "12dk önce". */
+export function timeAgo(ms: number, lang: 'en' | 'tr' = 'en'): string {
   const diff = Math.max(0, Date.now() - ms);
   const s = Math.floor(diff / 1000);
-  if (s < 60) return `${s}s ago`;
+  const u =
+    lang === 'tr'
+      ? { s: 'sn önce', m: 'dk önce', h: 'sa önce', d: 'g önce' }
+      : { s: 's ago', m: 'm ago', h: 'h ago', d: 'd ago' };
+  if (s < 60) return `${s}${u.s}`;
   const m = Math.floor(s / 60);
-  if (m < 60) return `${m}m ago`;
+  if (m < 60) return `${m}${u.m}`;
   const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
-  return `${Math.floor(h / 24)}d ago`;
+  if (h < 24) return `${h}${u.h}`;
+  return `${Math.floor(h / 24)}${u.d}`;
 }
 
 /** Format a coordinate pair as "37.77°N, 122.42°W". */

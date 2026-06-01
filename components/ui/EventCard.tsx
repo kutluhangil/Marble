@@ -2,38 +2,16 @@
 
 import { useEffect } from 'react';
 import { useUIStore } from '@/store/useUIStore';
+import { useLangStore } from '@/store/useLangStore';
+import { useT } from '@/lib/i18n/useT';
 import type { GeoPoint } from '@/lib/data/types';
 import { fmtCoord, fmtMag, timeAgo } from '@/lib/utils/format';
-
-const LAYER_LABEL: Record<GeoPoint['layer'], string> = {
-  quake: 'Earthquake',
-  iss: 'International Space Station',
-  weather: 'Weather',
-  flight: 'Flight',
-};
 
 const LAYER_COLOR: Record<GeoPoint['layer'], string> = {
   quake: 'var(--data-quake)',
   iss: 'var(--data-iss)',
   weather: 'var(--data-weather)',
   flight: 'var(--data-flight)',
-};
-
-const WMO: Record<number, string> = {
-  0: 'Clear sky',
-  1: 'Mainly clear',
-  2: 'Partly cloudy',
-  3: 'Overcast',
-  45: 'Fog',
-  48: 'Rime fog',
-  51: 'Light drizzle',
-  61: 'Light rain',
-  63: 'Rain',
-  65: 'Heavy rain',
-  71: 'Light snow',
-  73: 'Snow',
-  80: 'Rain showers',
-  95: 'Thunderstorm',
 };
 
 function num(v: unknown): number | null {
@@ -50,6 +28,10 @@ function Detail({ label, value }: { label: string; value: string }) {
 }
 
 function Body({ e }: { e: GeoPoint }) {
+  const t = useT();
+  const lang = useLangStore((s) => s.lang);
+  const c = t.card;
+
   if (e.layer === 'quake') {
     return (
       <>
@@ -57,9 +39,9 @@ function Body({ e }: { e: GeoPoint }) {
           {fmtMag(e.magnitude ?? 0)}
         </div>
         <div className="mt-3 space-y-1 text-sm">
-          <Detail label="Depth" value={`${num(e.meta.depth)?.toFixed(1) ?? '—'} km`} />
-          <Detail label="Location" value={fmtCoord(e.lat, e.lng)} />
-          <Detail label="When" value={timeAgo(e.timestamp)} />
+          <Detail label={c.depth} value={`${num(e.meta.depth)?.toFixed(1) ?? '—'} km`} />
+          <Detail label={c.location} value={fmtCoord(e.lat, e.lng)} />
+          <Detail label={c.when} value={timeAgo(e.timestamp, lang)} />
         </div>
         {typeof e.meta.url === 'string' && (
           <a
@@ -68,7 +50,7 @@ function Body({ e }: { e: GeoPoint }) {
             rel="noreferrer"
             className="mt-4 inline-block text-sm text-ink underline underline-offset-4"
           >
-            View on USGS
+            {c.viewUsgs}
           </a>
         )}
       </>
@@ -77,12 +59,9 @@ function Body({ e }: { e: GeoPoint }) {
   if (e.layer === 'iss') {
     return (
       <div className="mt-1 space-y-1 text-sm">
-        <Detail label="Altitude" value={`${num(e.alt)?.toFixed(0) ?? '—'} km`} />
-        <Detail
-          label="Speed"
-          value={`${num(e.meta.velocity)?.toFixed(0) ?? '—'} km/h`}
-        />
-        <Detail label="Over" value={fmtCoord(e.lat, e.lng)} />
+        <Detail label={c.altitude} value={`${num(e.alt)?.toFixed(0) ?? '—'} km`} />
+        <Detail label={c.speed} value={`${num(e.meta.velocity)?.toFixed(0) ?? '—'} km/h`} />
+        <Detail label={c.over} value={fmtCoord(e.lat, e.lng)} />
       </div>
     );
   }
@@ -94,8 +73,11 @@ function Body({ e }: { e: GeoPoint }) {
           {num(e.meta.temperature)?.toFixed(1) ?? '—'}°C
         </div>
         <div className="mt-3 space-y-1 text-sm">
-          <Detail label="Conditions" value={code != null ? WMO[code] ?? `Code ${code}` : '—'} />
-          <Detail label="Location" value={fmtCoord(e.lat, e.lng)} />
+          <Detail
+            label={c.conditions}
+            value={code != null ? (c.wmo[code] ?? `#${code}`) : '—'}
+          />
+          <Detail label={c.location} value={fmtCoord(e.lat, e.lng)} />
         </div>
       </>
     );
@@ -103,22 +85,17 @@ function Body({ e }: { e: GeoPoint }) {
   // flight
   return (
     <div className="mt-1 space-y-1 text-sm">
-      <Detail label="Altitude" value={`${num(e.alt)?.toFixed(1) ?? '—'} km`} />
-      <Detail
-        label="Speed"
-        value={`${num(e.meta.velocity)?.toFixed(0) ?? '—'} m/s`}
-      />
-      <Detail
-        label="Heading"
-        value={`${num(e.meta.heading)?.toFixed(0) ?? '—'}°`}
-      />
-      <Detail label="Position" value={fmtCoord(e.lat, e.lng)} />
+      <Detail label={c.altitude} value={`${num(e.alt)?.toFixed(1) ?? '—'} km`} />
+      <Detail label={c.speed} value={`${num(e.meta.velocity)?.toFixed(0) ?? '—'} m/s`} />
+      <Detail label={c.heading} value={`${num(e.meta.heading)?.toFixed(0) ?? '—'}°`} />
+      <Detail label={c.position} value={fmtCoord(e.lat, e.lng)} />
     </div>
   );
 }
 
 /** Detail card for the selected event. Driven by the UI store; Esc closes. */
 export default function EventCard() {
+  const t = useT();
   const e = useUIStore((s) => s.selectedEvent);
   const select = useUIStore((s) => s.select);
 
@@ -140,11 +117,11 @@ export default function EventCard() {
             className="inline-block h-2 w-2 rounded-full"
             style={{ background: LAYER_COLOR[e.layer] }}
           />
-          {LAYER_LABEL[e.layer]}
+          {t.card.layer[e.layer]}
         </div>
         <button
           onClick={() => select(null)}
-          aria-label="Close"
+          aria-label={t.card.close}
           className="text-ink-faint transition-colors hover:text-ink"
         >
           ✕
