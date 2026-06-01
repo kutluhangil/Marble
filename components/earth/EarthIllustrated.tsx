@@ -1,11 +1,8 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
-import { ShaderMaterial, Vector3 } from 'three';
+import { ShaderMaterial } from 'three';
 import { useEarthTextures } from '@/lib/textures/loader';
-import { sunDirectionWorld } from '@/lib/geo/sun-position';
-import { simDate } from '@/store/useTimeStore';
 
 const vertexShader = /* glsl */ `
   varying vec2 vUv;
@@ -20,52 +17,48 @@ const vertexShader = /* glsl */ `
   }
 `;
 
+// Evenly lit, posterized, saturated "illustrated" globe. No day/night
+// terminator — a soft camera-relative light gives it roundness while keeping
+// the whole sphere bright and legible, finished with an ink rim outline.
 const fragmentShader = /* glsl */ `
   uniform sampler2D dayMap;
-  uniform vec3 uSunDirView;
   varying vec2 vUv;
   varying vec3 vNormalV;
   varying vec3 vPosV;
   void main() {
     vec3 base = texture2D(dayMap, vUv).rgb;
-    base = floor(base * 5.0) / 5.0;                       // posterize
+    base = clamp(base * 1.12, 0.0, 1.0);          // lift
+    base = floor(base * 6.0) / 6.0;               // posterize into bands
     float lum = dot(base, vec3(0.299, 0.587, 0.114));
-    base = clamp(mix(vec3(lum), base, 1.3), 0.0, 1.0);    // boost saturation
-    // toon banding by sun
-    float nl = dot(normalize(vNormalV), normalize(uSunDirView));
-    float band = nl > 0.25 ? 1.0 : (nl > -0.05 ? 0.78 : 0.52);
-    vec3 col = base * band;
-    // ink outline at the rim
+    base = clamp(mix(vec3(lum), base, 1.4), 0.0, 1.0); // saturate
+
+    // Gentle form shading from a fixed light — never goes dark.
+    float ndl = dot(normalize(vNormalV), normalize(vec3(0.45, 0.35, 0.82)));
+    float shade = 0.84 + 0.16 * smoothstep(-0.4, 1.0, ndl);
+    vec3 col = base * shade;
+
+    // Ink rim outline.
     vec3 viewDir = normalize(-vPosV);
     float fres = pow(1.0 - max(dot(normalize(vNormalV), viewDir), 0.0), 3.0);
-    col = mix(col, vec3(0.10, 0.10, 0.12), smoothstep(0.45, 0.85, fres));
+    col = mix(col, vec3(0.12, 0.12, 0.14), smoothstep(0.55, 0.92, fres));
+
     gl_FragColor = vec4(col, 1.0);
   }
 `;
 
-/** A cel-shaded, posterized "illustrated" Earth with an ink rim outline. */
+/** A polished, evenly-lit illustrated globe (posterized + ink outline). */
 export default function EarthIllustrated() {
   const tex = useEarthTextures();
-  const camera = useThree((s) => s.camera);
-
-  const uniforms = useMemo(
-    () => ({
-      dayMap: { value: tex.day },
-      uSunDirView: { value: new Vector3(1, 0, 0) },
-    }),
-    [tex],
-  );
 
   const material = useMemo(
-    () => new ShaderMaterial({ vertexShader, fragmentShader, uniforms }),
-    [uniforms],
+    () =>
+      new ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms: { dayMap: { value: tex.day } },
+      }),
+    [tex],
   );
-
-  useFrame(() => {
-    uniforms.uSunDirView.value
-      .copy(sunDirectionWorld(simDate()))
-      .transformDirection(camera.matrixWorldInverse);
-  });
 
   return (
     <mesh material={material}>
