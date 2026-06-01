@@ -4,6 +4,7 @@ import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Color, MeshStandardMaterial, type Mesh } from 'three';
 import { useEarthTextures } from '@/lib/textures/loader';
+import { cloudState } from '@/lib/earth/cloudState';
 
 /**
  * Cloud shell just above the surface. The cloud image is white-on-black, so it
@@ -30,7 +31,10 @@ export default function Clouds() {
   );
 
   useFrame((_, dt) => {
-    if (ref.current) ref.current.rotation.y += dt * 0.006;
+    if (ref.current) {
+      ref.current.rotation.y += dt * 0.006;
+      cloudState.rotation = ref.current.rotation.y;
+    }
   });
 
   return (

@@ -6,6 +6,7 @@ import { Color, MeshStandardMaterial, Vector3 } from 'three';
 import { useEarthTextures } from '@/lib/textures/loader';
 import { sunDirectionWorld } from '@/lib/geo/sun-position';
 import { simDate } from '@/store/useTimeStore';
+import { cloudState } from '@/lib/earth/cloudState';
 
 /**
  * The Earth surface. A MeshStandardMaterial provides PBR shading (albedo,
@@ -17,8 +18,12 @@ export default function Earth() {
   const camera = useThree((s) => s.camera);
 
   const uniforms = useMemo(
-    () => ({ uSunDirView: { value: new Vector3(1, 0, 0) } }),
-    [],
+    () => ({
+      uSunDirView: { value: new Vector3(1, 0, 0) },
+      uCloudMap: { value: tex.clouds },
+      uCloudOffset: { value: 0 },
+    }),
+    [tex],
   );
 
   const material = useMemo(() => {
@@ -35,16 +40,38 @@ export default function Earth() {
 
     m.onBeforeCompile = (shader) => {
       shader.uniforms.uSunDirView = uniforms.uSunDirView;
+      shader.uniforms.uCloudMap = uniforms.uCloudMap;
+      shader.uniforms.uCloudOffset = uniforms.uCloudOffset;
       shader.fragmentShader =
-        'uniform vec3 uSunDirView;\n' +
-        shader.fragmentShader.replace(
-          '#include <emissivemap_fragment>',
-          `#include <emissivemap_fragment>
-           float dayFactor = smoothstep(-0.1, 0.25, dot(normalize(vNormal), uSunDirView));
-           totalEmissiveRadiance *= (1.0 - dayFactor);`,
-        );
+        'uniform vec3 uSunDirView;\nuniform sampler2D uCloudMap;\nuniform float uCloudOffset;\n' +
+        shader.fragmentShader
+          .replace(
+            '#include <map_fragment>',
+            `#include <map_fragment>
+             {
+               // Soft cloud shadows on the day side, aligned with the cloud layer.
+               float dayF = smoothstep(-0.1, 0.25, dot(normalize(vNormal), uSunDirView));
+               float cloudD = texture2D(uCloudMap, vec2(vMapUv.x - uCloudOffset / 6.2831853, vMapUv.y)).r;
+               diffuseColor.rgb *= (1.0 - cloudD * 0.32 * dayF);
+             }`,
+          )
+          .replace(
+            '#include <emissivemap_fragment>',
+            `#include <emissivemap_fragment>
+             float dayFactor = smoothstep(-0.1, 0.25, dot(normalize(vNormal), uSunDirView));
+             totalEmissiveRadiance *= (1.0 - dayFactor);
+             {
+               // Ocean sun-glint: specular highlight on water, sun side only.
+               vec3 Lv = normalize(uSunDirView);
+               vec3 Nv = normalize(vNormal);
+               vec3 Vv = normalize(vViewPosition);
+               float ocean = 1.0 - smoothstep(0.3, 0.6, roughnessFactor);
+               float glint = pow(max(dot(reflect(-Lv, Nv), Vv), 0.0), 90.0) * ocean * dayFactor;
+               totalEmissiveRadiance += glint * vec3(1.0, 0.95, 0.85) * 1.3;
+             }`,
+          );
     };
-    m.customProgramCacheKey = () => 'earth-daynight';
+    m.customProgramCacheKey = () => 'earth-daynight-v2';
     return m;
   }, [tex, uniforms]);
 
@@ -55,6 +82,7 @@ export default function Earth() {
     uniforms.uSunDirView.value
       .copy(dir)
       .transformDirection(camera.matrixWorldInverse);
+    uniforms.uCloudOffset.value = cloudState.rotation;
   });
 
   const ref = useRef(null);
