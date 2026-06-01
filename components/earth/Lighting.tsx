@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { type DirectionalLight } from 'three';
 import { sunDirectionWorld } from '@/lib/geo/sun-position';
+import { simDate } from '@/store/useTimeStore';
 
 /**
  * Studio 3-point rig. The key light tracks the real-time sun (world space, so
@@ -16,7 +17,7 @@ export default function Lighting() {
 
   useFrame(() => {
     if (key.current) {
-      key.current.position.copy(sunDirectionWorld(new Date())).multiplyScalar(5);
+      key.current.position.copy(sunDirectionWorld(simDate())).multiplyScalar(5);
     }
   });
 

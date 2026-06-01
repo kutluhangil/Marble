@@ -5,6 +5,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { Color, MeshStandardMaterial, Vector3 } from 'three';
 import { useEarthTextures } from '@/lib/textures/loader';
 import { sunDirectionWorld } from '@/lib/geo/sun-position';
+import { simDate } from '@/store/useTimeStore';
 
 /**
  * The Earth surface. A MeshStandardMaterial provides PBR shading (albedo,
@@ -48,7 +49,7 @@ export default function Earth() {
   }, [tex, uniforms]);
 
   useFrame(() => {
-    const dir = sunDirectionWorld(new Date());
+    const dir = sunDirectionWorld(simDate());
     // World sun direction expressed in view space (camera only, not the
     // spinning world group) so the terminator sweeps as the globe rotates.
     uniforms.uSunDirView.value

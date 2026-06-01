@@ -8,6 +8,7 @@ import { useT } from '@/lib/i18n/useT';
 import LayerPills from './LayerPills';
 import LiveStats from './LiveStats';
 import StylePills from './StylePills';
+import TimeScrubber from './TimeScrubber';
 
 // WebGL is client-only; load the canvas without SSR.
 const Globe = dynamic(() => import('@/components/earth/Globe'), { ssr: false });
@@ -70,6 +71,9 @@ export default function Hero() {
         </div>
         <LayerPills />
         <LiveStats />
+        <div className="flex justify-center pt-1">
+          <TimeScrubber />
+        </div>
       </div>
     </section>
   );

@@ -5,6 +5,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { ShaderMaterial, Vector3 } from 'three';
 import { useEarthTextures } from '@/lib/textures/loader';
 import { sunDirectionWorld } from '@/lib/geo/sun-position';
+import { simDate } from '@/store/useTimeStore';
 
 const vertexShader = /* glsl */ `
   varying vec2 vUv;
@@ -62,7 +63,7 @@ export default function EarthIllustrated() {
 
   useFrame(() => {
     uniforms.uSunDirView.value
-      .copy(sunDirectionWorld(new Date()))
+      .copy(sunDirectionWorld(simDate()))
       .transformDirection(camera.matrixWorldInverse);
   });
 
