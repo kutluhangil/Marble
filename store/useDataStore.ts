@@ -7,7 +7,14 @@ interface DataStore {
 }
 
 export const useDataStore = create<DataStore>((set) => ({
-  events: { quake: [], iss: [], weather: [], flight: [] },
+  events: {
+    quake: [],
+    iss: [],
+    weather: [],
+    flight: [],
+    volcano: [],
+    fire: [],
+  },
   setEvents: (layer, points) =>
     set((s) => ({ events: { ...s.events, [layer]: points } })),
 }));

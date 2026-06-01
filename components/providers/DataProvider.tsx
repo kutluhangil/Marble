@@ -10,6 +10,8 @@ const CADENCE: Record<Layer, number> = {
   iss: 5_000,
   weather: 300_000,
   flight: 15_000,
+  volcano: 600_000,
+  fire: 600_000,
 };
 
 const ENDPOINT: Record<Layer, string> = {
@@ -17,6 +19,8 @@ const ENDPOINT: Record<Layer, string> = {
   iss: 'iss',
   weather: 'weather',
   flight: 'flights',
+  volcano: 'volcanoes',
+  fire: 'fires',
 };
 
 /**

@@ -11,6 +11,8 @@ const META: { layer: Layer; color: string }[] = [
   { layer: 'iss', color: 'var(--data-iss)' },
   { layer: 'weather', color: 'var(--data-weather)' },
   { layer: 'flight', color: 'var(--data-flight)' },
+  { layer: 'volcano', color: 'var(--data-volcano)' },
+  { layer: 'fire', color: 'var(--data-fire)' },
 ];
 
 export default function LayerPills() {

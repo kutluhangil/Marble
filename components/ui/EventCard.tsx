@@ -12,6 +12,8 @@ const LAYER_COLOR: Record<GeoPoint['layer'], string> = {
   iss: 'var(--data-iss)',
   weather: 'var(--data-weather)',
   flight: 'var(--data-flight)',
+  volcano: 'var(--data-volcano)',
+  fire: 'var(--data-fire)',
 };
 
 function num(v: unknown): number | null {
@@ -82,13 +84,24 @@ function Body({ e }: { e: GeoPoint }) {
       </>
     );
   }
-  // flight
+  if (e.layer === 'flight') {
+    return (
+      <div className="mt-1 space-y-1 text-sm">
+        <Detail label={c.altitude} value={`${num(e.alt)?.toFixed(1) ?? '—'} km`} />
+        <Detail label={c.speed} value={`${num(e.meta.velocity)?.toFixed(0) ?? '—'} m/s`} />
+        <Detail label={c.heading} value={`${num(e.meta.heading)?.toFixed(0) ?? '—'}°`} />
+        <Detail label={c.position} value={fmtCoord(e.lat, e.lng)} />
+      </div>
+    );
+  }
+  // volcano / fire (EONET)
   return (
     <div className="mt-1 space-y-1 text-sm">
-      <Detail label={c.altitude} value={`${num(e.alt)?.toFixed(1) ?? '—'} km`} />
-      <Detail label={c.speed} value={`${num(e.meta.velocity)?.toFixed(0) ?? '—'} m/s`} />
-      <Detail label={c.heading} value={`${num(e.meta.heading)?.toFixed(0) ?? '—'}°`} />
-      <Detail label={c.position} value={fmtCoord(e.lat, e.lng)} />
+      {typeof e.meta.category === 'string' && e.meta.category && (
+        <Detail label={c.category} value={e.meta.category} />
+      )}
+      <Detail label={c.location} value={fmtCoord(e.lat, e.lng)} />
+      <Detail label={c.when} value={timeAgo(e.timestamp, lang)} />
     </div>
   );
 }

@@ -1,6 +1,19 @@
-export type Layer = 'quake' | 'iss' | 'weather' | 'flight';
+export type Layer =
+  | 'quake'
+  | 'iss'
+  | 'weather'
+  | 'flight'
+  | 'volcano'
+  | 'fire';
 
-export const LAYERS: Layer[] = ['quake', 'iss', 'weather', 'flight'];
+export const LAYERS: Layer[] = [
+  'quake',
+  'iss',
+  'weather',
+  'flight',
+  'volcano',
+  'fire',
+];
 
 /** A single normalized data point rendered on the globe. */
 export interface GeoPoint {

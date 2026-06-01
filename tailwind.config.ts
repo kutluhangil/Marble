@@ -23,6 +23,8 @@ const config: Config = {
         'data-iss': 'var(--data-iss)',
         'data-flight': 'var(--data-flight)',
         'data-weather': 'var(--data-weather)',
+        'data-volcano': 'var(--data-volcano)',
+        'data-fire': 'var(--data-fire)',
         'atmo-tint': 'var(--atmo-tint)',
       },
       fontFamily: {

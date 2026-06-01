@@ -20,6 +20,8 @@ export default function LayersRoot() {
       {active.quake && <QuakeRings />}
       {active.weather && <PointLayer points={events.weather} layer="weather" />}
       {active.flight && <PointLayer points={events.flight} layer="flight" />}
+      {active.volcano && <PointLayer points={events.volcano} layer="volcano" />}
+      {active.fire && <PointLayer points={events.fire} layer="fire" />}
       {active.iss && iss && (
         <>
           <ISSMarker point={iss} />

@@ -7,6 +7,7 @@ interface LayersStore {
   /** Set false when the flights API reports no credentials. */
   flightAvailable: boolean;
   toggle(layer: Layer): void;
+  setActive(active: Record<Layer, boolean>): void;
   setFlightAvailable(v: boolean): void;
 }
 
@@ -19,10 +20,18 @@ const noopStorage = {
 export const useLayersStore = create<LayersStore>()(
   persist(
     (set) => ({
-      active: { quake: true, iss: true, weather: false, flight: false },
+      active: {
+        quake: true,
+        iss: true,
+        weather: false,
+        flight: false,
+        volcano: false,
+        fire: false,
+      },
       flightAvailable: false,
       toggle: (layer) =>
         set((s) => ({ active: { ...s.active, [layer]: !s.active[layer] } })),
+      setActive: (active) => set({ active }),
       setFlightAvailable: (v) => set({ flightAvailable: v }),
     }),
     {

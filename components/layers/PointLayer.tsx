@@ -19,11 +19,15 @@ const COLORS: Record<Layer, string> = {
   iss: '#ca8a04',
   weather: '#0ea5e9',
   flight: '#44403c',
+  volcano: '#be185d',
+  fire: '#ea580c',
 };
 
 function scaleFor(p: GeoPoint): number {
   if (p.layer === 'quake') return 0.006 + Math.max(0, p.magnitude ?? 0) * 0.004;
   if (p.layer === 'flight') return 0.009;
+  if (p.layer === 'volcano') return 0.013;
+  if (p.layer === 'fire') return 0.012;
   return 0.011; // weather
 }
 

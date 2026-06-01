@@ -8,6 +8,8 @@ export interface Dict {
     iss: string;
     weather: string;
     flight: string;
+    volcano: string;
+    fire: string;
     na: string;
   };
   stats: {
@@ -26,8 +28,16 @@ export interface Dict {
   style: { realistic: string; illustrated: string; atlas: string };
   time: { caption: string; now: string };
   card: {
-    layer: { quake: string; iss: string; weather: string; flight: string };
+    layer: {
+      quake: string;
+      iss: string;
+      weather: string;
+      flight: string;
+      volcano: string;
+      fire: string;
+    };
     depth: string;
+    category: string;
     location: string;
     when: string;
     altitude: string;
@@ -55,6 +65,8 @@ const en: Dict = {
     iss: 'ISS',
     weather: 'Weather',
     flight: 'Flights',
+    volcano: 'Volcanoes',
+    fire: 'Wildfires',
     na: 'n/a',
   },
   stats: {
@@ -87,8 +99,11 @@ const en: Dict = {
       iss: 'International Space Station',
       weather: 'Weather',
       flight: 'Flight',
+      volcano: 'Volcano',
+      fire: 'Wildfire',
     },
     depth: 'Depth',
+    category: 'Category',
     location: 'Location',
     when: 'When',
     altitude: 'Altitude',
@@ -131,6 +146,8 @@ const tr: Dict = {
     iss: 'ISS',
     weather: 'Hava',
     flight: 'Uçuşlar',
+    volcano: 'Volkanlar',
+    fire: 'Yangınlar',
     na: 'yok',
   },
   stats: {
@@ -163,8 +180,11 @@ const tr: Dict = {
       iss: 'Uluslararası Uzay İstasyonu',
       weather: 'Hava Durumu',
       flight: 'Uçuş',
+      volcano: 'Volkan',
+      fire: 'Yangın',
     },
     depth: 'Derinlik',
+    category: 'Kategori',
     location: 'Konum',
     when: 'Zaman',
     altitude: 'Yükseklik',

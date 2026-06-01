@@ -112,6 +112,37 @@ interface OpenSkyResponse {
   states: OpenSkyState[] | null;
 }
 
+// --- NASA EONET (volcanoes, wildfires) ----------------------------------
+
+interface EonetEvent {
+  id: string;
+  title: string;
+  categories: { id: string; title: string }[];
+  geometry: { date: string; type: string; coordinates: number[] }[];
+}
+
+export function normalizeEonet(
+  json: { events?: EonetEvent[] },
+  layer: 'volcano' | 'fire',
+): GeoPoint[] {
+  const out: GeoPoint[] = [];
+  for (const e of json.events ?? []) {
+    const g = e.geometry[e.geometry.length - 1];
+    if (!g || g.type !== 'Point') continue;
+    const [lng, lat] = g.coordinates;
+    out.push({
+      id: e.id,
+      layer,
+      lat,
+      lng,
+      label: e.title,
+      timestamp: Date.parse(g.date) || Date.now(),
+      meta: { category: e.categories[0]?.title ?? '' },
+    });
+  }
+  return out;
+}
+
 export function normalizeFlights(r: OpenSkyResponse): GeoPoint[] {
   const out: GeoPoint[] = [];
   for (const s of r.states ?? []) {
