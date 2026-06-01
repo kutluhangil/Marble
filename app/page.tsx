@@ -5,14 +5,14 @@ import BuiltWith from '@/components/landing/BuiltWith';
 import Footer from '@/components/landing/Footer';
 import DataProvider from '@/components/providers/DataProvider';
 import ShareSync from '@/components/providers/ShareSync';
-import EventCard from '@/components/ui/EventCard';
+import InfoPanel from '@/components/ui/InfoPanel';
 
 export default function Home() {
   return (
     <main>
       <DataProvider />
       <ShareSync />
-      <EventCard />
+      <InfoPanel />
       <Nav />
       <Hero />
       <HowItWorks />

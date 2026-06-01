@@ -47,6 +47,38 @@ export interface Dict {
     learnMore: string;
   };
   status: { live: string; idle: string; unavailable: string };
+  panel: {
+    nearestCity: string;
+    tsunami: string;
+    alert: string;
+    latitude: string;
+    longitude: string;
+    localTime: string;
+    period: string;
+    inclination: string;
+    crewAboard: string;
+    temperature: string;
+    feelsLike: string;
+    humidity: string;
+    wind: string;
+    pressure: string;
+    sunrise: string;
+    sunset: string;
+    population: string;
+    elevation: string;
+    timezone: string;
+    aboutLocation: string;
+    coordinates: string;
+    detected: string;
+    yes: string;
+    no: string;
+    magBands: Record<
+      'minor' | 'light' | 'moderate' | 'strong' | 'major',
+      { label: string; blurb: string }
+    >;
+    issAbout: string;
+    fireAbout: string;
+  };
   card: {
     layer: {
       quake: string;
@@ -161,6 +193,43 @@ const en: Dict = {
     learnMore: 'Learn more',
   },
   status: { live: 'Live', idle: 'Idle', unavailable: 'Unavailable' },
+  panel: {
+    nearestCity: 'Nearest city',
+    tsunami: 'Tsunami risk',
+    alert: 'Alert level',
+    latitude: 'Latitude',
+    longitude: 'Longitude',
+    localTime: 'Local time',
+    period: 'Orbital period',
+    inclination: 'Inclination',
+    crewAboard: 'Crew aboard',
+    temperature: 'Temperature',
+    feelsLike: 'Feels like',
+    humidity: 'Humidity',
+    wind: 'Wind',
+    pressure: 'Pressure',
+    sunrise: 'Sunrise',
+    sunset: 'Sunset',
+    population: 'Population',
+    elevation: 'Elevation',
+    timezone: 'Time zone',
+    aboutLocation: 'About this place',
+    coordinates: 'Coordinates',
+    detected: 'Detected',
+    yes: 'Yes',
+    no: 'No',
+    magBands: {
+      minor: { label: 'Minor', blurb: 'Rarely felt; recorded by instruments.' },
+      light: { label: 'Light', blurb: 'Often felt, but seldom causes damage.' },
+      moderate: { label: 'Moderate', blurb: 'Can damage weak structures near the epicenter.' },
+      strong: { label: 'Strong', blurb: 'Can cause damage in populated areas.' },
+      major: { label: 'Major', blurb: 'Capable of serious damage over a large area.' },
+    },
+    issAbout:
+      'The International Space Station orbits Earth roughly every 90 minutes at about 28,000 km/h, some 400 km above the surface.',
+    fireAbout:
+      'Detected from satellite thermal monitoring. Open events are tracked until contained.',
+  },
   card: {
     layer: {
       quake: 'Earthquake',
@@ -290,6 +359,43 @@ const tr: Dict = {
     learnMore: 'Daha fazla',
   },
   status: { live: 'Canlı', idle: 'Beklemede', unavailable: 'Kullanılamıyor' },
+  panel: {
+    nearestCity: 'En yakın şehir',
+    tsunami: 'Tsunami riski',
+    alert: 'Uyarı düzeyi',
+    latitude: 'Enlem',
+    longitude: 'Boylam',
+    localTime: 'Yerel saat',
+    period: 'Yörünge süresi',
+    inclination: 'Eğim',
+    crewAboard: 'Mürettebat',
+    temperature: 'Sıcaklık',
+    feelsLike: 'Hissedilen',
+    humidity: 'Nem',
+    wind: 'Rüzgar',
+    pressure: 'Basınç',
+    sunrise: 'Gün doğumu',
+    sunset: 'Gün batımı',
+    population: 'Nüfus',
+    elevation: 'Yükseklik',
+    timezone: 'Saat dilimi',
+    aboutLocation: 'Bu yer hakkında',
+    coordinates: 'Koordinatlar',
+    detected: 'Tespit',
+    yes: 'Evet',
+    no: 'Hayır',
+    magBands: {
+      minor: { label: 'Hafif', blurb: 'Nadiren hissedilir; cihazlarla kaydedilir.' },
+      light: { label: 'Düşük', blurb: 'Sıkça hissedilir ama nadiren hasar verir.' },
+      moderate: { label: 'Orta', blurb: 'Merkez yakınındaki zayıf yapılara hasar verebilir.' },
+      strong: { label: 'Şiddetli', blurb: 'Yerleşim alanlarında hasara yol açabilir.' },
+      major: { label: 'Büyük', blurb: 'Geniş bir alanda ciddi hasar verebilir.' },
+    },
+    issAbout:
+      'Uluslararası Uzay İstasyonu, yüzeyden ~400 km yükseklikte, saatte yaklaşık 28.000 km hızla Dünya çevresini kabaca 90 dakikada bir dolaşır.',
+    fireAbout:
+      'Uydu termal izlemesiyle tespit edilir. Açık olaylar kontrol altına alınana dek izlenir.',
+  },
   card: {
     layer: {
       quake: 'Deprem',
