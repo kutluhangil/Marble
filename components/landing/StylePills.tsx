@@ -12,7 +12,7 @@ export default function StylePills() {
   const setStyle = useGlobeStyleStore((s) => s.setStyle);
 
   return (
-    <div className="inline-flex items-center gap-1 rounded-pill border border-border-hair bg-white/60 p-1 text-sm backdrop-blur">
+    <div className="glass inline-flex items-center gap-1 rounded-pill border border-border-hair p-1 text-sm backdrop-blur">
       {STYLES.map((s) => (
         <button
           key={s}

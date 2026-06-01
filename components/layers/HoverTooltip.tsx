@@ -32,7 +32,7 @@ export default function HoverTooltip() {
 
   return (
     <Html position={pos} center style={{ pointerEvents: 'none' }}>
-      <div className="whitespace-nowrap rounded-pill border border-border-soft bg-white/90 px-2.5 py-1 font-mono text-xs text-ink shadow-card backdrop-blur">
+      <div className="glass whitespace-nowrap rounded-pill border border-border-soft px-2.5 py-1 font-mono text-xs text-ink shadow-card backdrop-blur">
         {p.label}
       </div>
     </Html>

@@ -21,7 +21,7 @@ export default function TimeScrubber() {
   const simDate = new Date(Date.now() + offsetMs);
 
   return (
-    <div className="inline-flex items-center gap-3 rounded-pill border border-border-hair bg-white/60 px-4 py-2 text-xs backdrop-blur">
+    <div className="glass inline-flex items-center gap-3 rounded-pill border border-border-hair px-4 py-2 text-xs backdrop-blur">
       <span className="font-mono uppercase text-ink-muted">{t.time.caption}</span>
       <input
         type="range"

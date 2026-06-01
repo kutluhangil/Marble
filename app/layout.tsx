@@ -70,6 +70,12 @@ export default function RootLayout({
     >
       <body>
         <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var s=localStorage.getItem('marble-theme');if(s){var t=JSON.parse(s).state.theme;if(t==='dark')document.documentElement.dataset.theme='dark';}}catch(e){}",
+          }}
+        />
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />

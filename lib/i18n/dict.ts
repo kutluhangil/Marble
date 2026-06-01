@@ -28,6 +28,7 @@ export interface Dict {
   style: { realistic: string; illustrated: string; atlas: string };
   time: { caption: string; now: string };
   actions: { share: string; copied: string; screenshot: string };
+  theme: { toggle: string };
   card: {
     layer: {
       quake: string;
@@ -95,6 +96,7 @@ const en: Dict = {
   style: { realistic: 'Realistic', illustrated: 'Illustrated', atlas: 'Atlas' },
   time: { caption: 'Sun', now: 'now' },
   actions: { share: 'Share', copied: 'Copied!', screenshot: 'Save PNG' },
+  theme: { toggle: 'Toggle theme' },
   card: {
     layer: {
       quake: 'Earthquake',
@@ -177,6 +179,7 @@ const tr: Dict = {
   style: { realistic: 'Gerçekçi', illustrated: 'İllüstrasyon', atlas: 'Atlas' },
   time: { caption: 'Güneş', now: 'şimdi' },
   actions: { share: 'Paylaş', copied: 'Kopyalandı!', screenshot: 'PNG kaydet' },
+  theme: { toggle: 'Temayı değiştir' },
   card: {
     layer: {
       quake: 'Deprem',

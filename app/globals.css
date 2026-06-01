@@ -36,6 +36,9 @@
   /* Earth atmosphere tint */
   --atmo-tint: #bfdbfe;
 
+  /* Glass panels */
+  --glass: rgba(255, 255, 255, 0.7);
+
   /* Shadows */
   --shadow-contact: rgba(24, 24, 27, 0.12);
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.06);
@@ -62,6 +65,31 @@
   --lh-snug: 1.3;
   --lh-normal: 1.6;
   --ls-display: -0.02em;
+}
+
+[data-theme='dark'] {
+  --paper: #0b0a09;
+  --paper-soft: #121110;
+  --paper-edge: #1c1917;
+  --surface: #171513;
+  --surface-soft: #1f1c19;
+
+  --border-hair: #292524;
+  --border-soft: #3f3b37;
+  --border-ink: #fafaf9;
+
+  --ink: #fafaf9;
+  --ink-soft: #d6d3d1;
+  --ink-muted: #a8a29e;
+  --ink-faint: #78716c;
+
+  --accent: #fafaf9;
+  --glass: rgba(23, 21, 19, 0.55);
+  --shadow-contact: rgba(0, 0, 0, 0.5);
+}
+
+.glass {
+  background: var(--glass);
 }
 
 html {
