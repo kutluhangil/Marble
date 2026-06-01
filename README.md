@@ -17,9 +17,15 @@ and (optionally) flight traffic.
 - **Editorial light design** — warm grays, generous white space, and editorial
   typography. No dark space background.
 - **Live layers** — earthquakes (USGS), the ISS (wheretheiss.at), city weather
-  (Open-Meteo), and flights (OpenSky, optional). Toggle them, hover for a label,
-  click for detail.
-- **Calm motion** — a slow turntable rotation, gentle reveals, and smooth drag-to-rotate.
+  (Open-Meteo), volcanoes and wildfires (NASA EONET), and flights (OpenSky,
+  optional). Toggle them, hover for a label, click for detail.
+- **Globe styles** — switch between Realistic, Illustrated (cel-shaded), and
+  Atlas (flat two-tone cartographic) renderings.
+- **Time scrubber** — drag the sun ±12h and watch the terminator and city lights sweep.
+- **Light & dark** editorial themes, Turkish and English, shareable view URLs,
+  and PNG export.
+- **Calm motion** — a slow turntable rotation, ripple rings on new quakes,
+  click-to-fly camera, gentle reveals, and smooth drag-to-rotate.
 
 ## The realism breakdown
 
@@ -39,6 +45,7 @@ The Earth uses a `MeshStandardMaterial` extended via `onBeforeCompile`:
 - **USGS** — earthquakes, past 24 hours.
 - **wheretheiss.at** — live ISS position.
 - **Open-Meteo** — current conditions for a curated list of major cities.
+- **NASA EONET** — open volcano and wildfire events.
 - **OpenSky** — live flight states (requires OAuth2 credentials; disabled gracefully
   without them).
 - **NASA** — Blue Marble and Black Marble imagery (public domain).
