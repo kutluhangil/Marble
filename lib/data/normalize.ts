@@ -9,6 +9,11 @@ interface UsgsFeature {
     place: string | null;
     time: number;
     url: string;
+    tsunami?: number;
+    alert?: string | null;
+    felt?: number | null;
+    sig?: number | null;
+    magType?: string | null;
   };
   geometry: { coordinates: [number, number, number] };
 }
@@ -33,6 +38,11 @@ export function normalizeQuakes(feed: UsgsFeed): GeoPoint[] {
         place: f.properties.place,
         url: f.properties.url,
         mag: f.properties.mag,
+        tsunami: f.properties.tsunami === 1,
+        alert: f.properties.alert ?? null,
+        felt: f.properties.felt ?? null,
+        sig: f.properties.sig ?? null,
+        magType: f.properties.magType ?? null,
       },
     };
   });
@@ -70,14 +80,26 @@ export interface City {
   name: string;
   lat: number;
   lng: number;
+  country?: string;
+  population?: string;
+  elevation?: number;
 }
 
 interface OpenMeteoLocation {
+  timezone?: string;
+  utc_offset_seconds?: number;
   current?: {
     time: string;
     temperature_2m: number;
+    apparent_temperature: number;
+    relative_humidity_2m: number;
+    surface_pressure: number;
+    wind_speed_10m: number;
+    wind_direction_10m: number;
     weather_code: number;
+    is_day: number;
   };
+  daily?: { sunrise: string[]; sunset: string[] };
 }
 
 export function normalizeWeather(
@@ -86,7 +108,8 @@ export function normalizeWeather(
 ): GeoPoint[] {
   const arr = Array.isArray(resp) ? resp : [resp];
   return cities.map((c, i) => {
-    const cur = arr[i]?.current;
+    const loc = arr[i];
+    const cur = loc?.current;
     return {
       id: `weather-${c.name}`,
       layer: 'weather',
@@ -96,8 +119,21 @@ export function normalizeWeather(
       timestamp: cur?.time ? Date.parse(cur.time) : Date.now(),
       meta: {
         temperature: cur?.temperature_2m ?? null,
+        apparentTemperature: cur?.apparent_temperature ?? null,
+        humidity: cur?.relative_humidity_2m ?? null,
+        pressure: cur?.surface_pressure ?? null,
+        windSpeed: cur?.wind_speed_10m ?? null,
+        windDirection: cur?.wind_direction_10m ?? null,
         weatherCode: cur?.weather_code ?? null,
+        isDay: cur?.is_day ?? 1,
+        localTime: cur?.time ?? null,
+        timezone: loc?.timezone ?? null,
+        sunrise: loc?.daily?.sunrise?.[0] ?? null,
+        sunset: loc?.daily?.sunset?.[0] ?? null,
         city: c.name,
+        country: c.country ?? null,
+        population: c.population ?? null,
+        elevation: c.elevation ?? null,
       },
     };
   });
