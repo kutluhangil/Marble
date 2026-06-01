@@ -7,6 +7,7 @@ import { hasWebGL } from '@/lib/utils/webgl';
 import { useT } from '@/lib/i18n/useT';
 import LayerPills from './LayerPills';
 import LiveStats from './LiveStats';
+import StylePills from './StylePills';
 
 // WebGL is client-only; load the canvas without SSR.
 const Globe = dynamic(() => import('@/components/earth/Globe'), { ssr: false });
@@ -64,6 +65,9 @@ export default function Hero() {
       </motion.div>
 
       <div className="mt-8 space-y-4">
+        <div className="flex justify-center">
+          <StylePills />
+        </div>
         <LayerPills />
         <LiveStats />
       </div>

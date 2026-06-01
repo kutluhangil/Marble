@@ -4,9 +4,7 @@ import { Suspense, useRef, type ReactNode } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { ACESFilmicToneMapping, type Group } from 'three';
-import Earth from './Earth';
-import Clouds from './Clouds';
-import Atmosphere from './Atmosphere';
+import EarthScene from './EarthScene';
 import Lighting from './Lighting';
 import ContactShadow from './ContactShadow';
 import LayersRoot from '@/components/layers/LayersRoot';
@@ -38,12 +36,10 @@ export default function Globe() {
       <Suspense fallback={null}>
         <Lighting />
         <World>
-          <Earth />
-          <Clouds />
+          <EarthScene />
           <LayersRoot />
           <HoverTooltip />
         </World>
-        <Atmosphere />
         <ContactShadow />
         <OrbitControls
           enablePan={false}

@@ -23,6 +23,7 @@ export interface Dict {
   };
   built: { title: string; body: string };
   footer: { tagline: string };
+  style: { realistic: string; illustrated: string; atlas: string };
   card: {
     layer: { quake: string; iss: string; weather: string; flight: string };
     depth: string;
@@ -77,6 +78,7 @@ const en: Dict = {
     body: 'Three.js · React Three Fiber · custom PBR shading · NASA Blue Marble and Black Marble imagery · a real-time solar terminator · USGS · Open-Meteo · OpenSky.',
   },
   footer: { tagline: 'A live portrait of Earth' },
+  style: { realistic: 'Realistic', illustrated: 'Illustrated', atlas: 'Atlas' },
   card: {
     layer: {
       quake: 'Earthquake',
@@ -151,6 +153,7 @@ const tr: Dict = {
     body: 'Three.js · React Three Fiber · özel PBR gölgeleme · NASA Blue Marble ve Black Marble görüntüleri · gerçek zamanlı gündoğumu çizgisi · USGS · Open-Meteo · OpenSky.',
   },
   footer: { tagline: 'Dünya’nın canlı portresi' },
+  style: { realistic: 'Gerçekçi', illustrated: 'İllüstrasyon', atlas: 'Atlas' },
   card: {
     layer: {
       quake: 'Deprem',
