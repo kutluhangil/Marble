@@ -1,4 +1,13 @@
+import type { Layer } from '@/lib/data/types';
+
 export type Lang = 'en' | 'tr';
+
+interface LayerInfo {
+  desc: string;
+  source: string;
+  updates: string;
+  coverage: string;
+}
 
 export interface Dict {
   nav: { about: string };
@@ -29,6 +38,15 @@ export interface Dict {
   time: { caption: string; now: string };
   actions: { share: string; copied: string; screenshot: string };
   theme: { toggle: string };
+  layerInfo: Record<Layer, LayerInfo>;
+  infoLabels: {
+    source: string;
+    updates: string;
+    coverage: string;
+    status: string;
+    learnMore: string;
+  };
+  status: { live: string; idle: string; unavailable: string };
   card: {
     layer: {
       quake: string;
@@ -97,6 +115,52 @@ const en: Dict = {
   time: { caption: 'Sun', now: 'now' },
   actions: { share: 'Share', copied: 'Copied!', screenshot: 'Save PNG' },
   theme: { toggle: 'Toggle theme' },
+  layerInfo: {
+    quake: {
+      desc: 'Live earthquake activity detected worldwide over the last 24 hours.',
+      source: 'USGS Earthquake Hazards Program',
+      updates: 'Every 60 seconds',
+      coverage: 'Global',
+    },
+    iss: {
+      desc: 'Real-time position and orbital path of the International Space Station.',
+      source: 'wheretheiss.at',
+      updates: 'Every 5 seconds',
+      coverage: 'Orbital, worldwide',
+    },
+    weather: {
+      desc: 'Current conditions sampled from major cities around the globe.',
+      source: 'Open-Meteo',
+      updates: 'Every 5 minutes',
+      coverage: 'Major cities worldwide',
+    },
+    flight: {
+      desc: 'Live commercial aircraft positions.',
+      source: 'OpenSky Network',
+      updates: 'Every 15 seconds',
+      coverage: 'Europe (sample)',
+    },
+    volcano: {
+      desc: 'Recently active and monitored volcano locations.',
+      source: 'NASA EONET',
+      updates: 'Every 10 minutes',
+      coverage: 'Global',
+    },
+    fire: {
+      desc: 'Active wildfire events detected by satellite monitoring.',
+      source: 'NASA EONET',
+      updates: 'Every 10 minutes',
+      coverage: 'Global',
+    },
+  },
+  infoLabels: {
+    source: 'Source',
+    updates: 'Updates',
+    coverage: 'Coverage',
+    status: 'Status',
+    learnMore: 'Learn more',
+  },
+  status: { live: 'Live', idle: 'Idle', unavailable: 'Unavailable' },
   card: {
     layer: {
       quake: 'Earthquake',
@@ -180,6 +244,52 @@ const tr: Dict = {
   time: { caption: 'Güneş', now: 'şimdi' },
   actions: { share: 'Paylaş', copied: 'Kopyalandı!', screenshot: 'PNG kaydet' },
   theme: { toggle: 'Temayı değiştir' },
+  layerInfo: {
+    quake: {
+      desc: 'Son 24 saatte dünya genelinde algılanan canlı deprem etkinliği.',
+      source: 'USGS Deprem Tehlikeleri Programı',
+      updates: '60 saniyede bir',
+      coverage: 'Küresel',
+    },
+    iss: {
+      desc: 'Uluslararası Uzay İstasyonu’nun gerçek zamanlı konumu ve yörüngesi.',
+      source: 'wheretheiss.at',
+      updates: '5 saniyede bir',
+      coverage: 'Yörünge, dünya geneli',
+    },
+    weather: {
+      desc: 'Dünyadaki büyük şehirlerden alınan anlık hava koşulları.',
+      source: 'Open-Meteo',
+      updates: '5 dakikada bir',
+      coverage: 'Büyük şehirler',
+    },
+    flight: {
+      desc: 'Canlı ticari uçak konumları.',
+      source: 'OpenSky Network',
+      updates: '15 saniyede bir',
+      coverage: 'Avrupa (örnek)',
+    },
+    volcano: {
+      desc: 'Son dönemde aktif ve izlenen volkan konumları.',
+      source: 'NASA EONET',
+      updates: '10 dakikada bir',
+      coverage: 'Küresel',
+    },
+    fire: {
+      desc: 'Uydu izlemesiyle tespit edilen aktif yangın olayları.',
+      source: 'NASA EONET',
+      updates: '10 dakikada bir',
+      coverage: 'Küresel',
+    },
+  },
+  infoLabels: {
+    source: 'Kaynak',
+    updates: 'Güncelleme',
+    coverage: 'Kapsam',
+    status: 'Durum',
+    learnMore: 'Daha fazla',
+  },
+  status: { live: 'Canlı', idle: 'Beklemede', unavailable: 'Kullanılamıyor' },
   card: {
     layer: {
       quake: 'Deprem',
