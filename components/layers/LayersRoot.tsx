@@ -64,7 +64,7 @@ export default function LayersRoot() {
           points={events.weather}
           cellFor={weatherCell}
           tintFor={weatherTint}
-          size={0.06}
+          pixelSize={28}
         />
       )}
       {active.flight && (
@@ -72,7 +72,7 @@ export default function LayersRoot() {
           points={events.flight}
           cellFor={flightCell}
           tintFor={flightTint}
-          size={0.05}
+          pixelSize={24}
         />
       )}
       {active.volcano && (
@@ -80,7 +80,7 @@ export default function LayersRoot() {
           points={events.volcano}
           cellFor={volcanoCell}
           tintFor={volcanoTint}
-          size={0.07}
+          pixelSize={34}
         />
       )}
       {active.fire && (
@@ -88,7 +88,7 @@ export default function LayersRoot() {
           points={events.fire}
           cellFor={fireCell}
           tintFor={fireTint}
-          size={0.06}
+          pixelSize={28}
         />
       )}
       {active.iss && iss && <ISSLayer point={iss} />}

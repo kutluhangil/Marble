@@ -102,7 +102,7 @@ export default function ISSLayer({ point }: { point: GeoPoint }) {
           toneMapped={false}
         />
       </mesh>
-      <IconLayer points={issArr} cellFor={issCell} tintFor={issTint} size={0.11} />
+      <IconLayer points={issArr} cellFor={issCell} tintFor={issTint} pixelSize={48} />
     </group>
   );
 }

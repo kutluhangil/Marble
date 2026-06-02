@@ -20,54 +20,189 @@ const COLS = 4;
 const ROWS = 4;
 const CELL = 128;
 
-// Authored white line/silhouette symbols (viewBox 0 0 24 24). Tinted per layer
-// in the shader. No external assets.
-const SVG: Record<IconName, string> = {
-  sun: `<g fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5" fill="#fff" stroke="none"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.9" y1="4.9" x2="7" y2="7"/><line x1="17" y1="17" x2="19.1" y2="19.1"/><line x1="19.1" y1="4.9" x2="17" y2="7"/><line x1="7" y1="17" x2="4.9" y2="19.1"/></g>`,
-  cloud: `<g fill="#fff"><circle cx="8" cy="14" r="4"/><circle cx="12.5" cy="11" r="5"/><circle cx="16.5" cy="14" r="4"/><rect x="8" y="13" width="8.5" height="5" rx="1"/></g>`,
-  rain: `<g fill="#fff"><circle cx="8" cy="11" r="3.4"/><circle cx="12.5" cy="8.5" r="4.3"/><circle cx="16.5" cy="11" r="3.4"/><rect x="8" y="10.5" width="8.5" height="4" rx="1"/></g><g stroke="#fff" stroke-width="2" stroke-linecap="round"><line x1="9" y1="17" x2="8" y2="21"/><line x1="13" y1="17" x2="12" y2="21"/><line x1="17" y1="17" x2="16" y2="21"/></g>`,
-  storm: `<g fill="#fff"><circle cx="8" cy="10" r="3.4"/><circle cx="12.5" cy="7.5" r="4.3"/><circle cx="16.5" cy="10" r="3.4"/><rect x="8" y="9.5" width="8.5" height="4" rx="1"/></g><polygon points="13,14 8,20 11.5,20 9.5,24 16,17 12.5,17 14.5,14" fill="#fff"/>`,
-  snow: `<g stroke="#fff" stroke-width="2" stroke-linecap="round"><line x1="12" y1="3" x2="12" y2="21"/><line x1="4" y1="7.5" x2="20" y2="16.5"/><line x1="20" y1="7.5" x2="4" y2="16.5"/></g>`,
-  fog: `<g stroke="#fff" stroke-width="2" stroke-linecap="round"><line x1="5" y1="8" x2="19" y2="8"/><line x1="3.5" y1="12" x2="20.5" y2="12"/><line x1="6" y1="16" x2="18" y2="16"/><line x1="8" y1="20" x2="16" y2="20"/></g>`,
-  volcano: `<polygon points="3,21 9,10 15,10 21,21" fill="#fff"/><polygon points="9,10 11,7 13,7 15,10" fill="#fff"/><g fill="#fff" opacity="0.75"><circle cx="12" cy="5" r="1.7"/><circle cx="9.5" cy="3.5" r="1.3"/><circle cx="14.5" cy="3.2" r="1.4"/></g>`,
-  flame: `<path d="M12 2 C 14 6 17 7.5 17 13 a5 5 0 0 1 -10 0 c0 -2.5 1.2 -4 2.5 -5 c0.4 1.8 1.6 2.2 2.5 1.5 C 14.5 8.5 12.5 6 12 2 Z" fill="#fff"/>`,
-  iss: `<g fill="#fff"><rect x="10.5" y="10.5" width="3" height="3" rx="0.5"/></g><g fill="#fff" opacity="0.92"><rect x="2.5" y="9" width="5.5" height="6" rx="0.6"/><rect x="16" y="9" width="5.5" height="6" rx="0.6"/></g><g stroke="#fff" stroke-width="1.6"><line x1="8" y1="12" x2="10.5" y2="12"/><line x1="13.5" y1="12" x2="16" y2="12"/></g>`,
-  plane: `<path d="M2.5 12.5 L19 9 C 20.5 8.7 21 9.2 20.5 10.5 L 11 13.2 L 7.5 18 L 5.5 18 L 7 12.8 L 4 13.5 L 3 15.5 L 1.8 15.5 Z" fill="#fff"/>`,
-};
+type Ctx = CanvasRenderingContext2D;
 
-let cached: Promise<Texture> | null = null;
-
-function rasterize(svg: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const doc = `<svg xmlns="http://www.w3.org/2000/svg" width="${CELL}" height="${CELL}" viewBox="0 0 24 24">${svg}</svg>`;
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(doc)}`;
-  });
+function cloud(ctx: Ctx, cy: number, r: number) {
+  ctx.beginPath();
+  ctx.arc(44, cy, r, 0, Math.PI * 2);
+  ctx.arc(66, cy - r * 0.6, r * 1.3, 0, Math.PI * 2);
+  ctx.arc(88, cy, r, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillRect(44, cy - r * 0.2, 44, r + 6);
 }
 
-/** Build (once) the icon atlas as a CanvasTexture. */
-export function getIconAtlas(): Promise<Texture> {
+// Each icon is drawn white into a 128x128 cell with the Canvas 2D API
+// (synchronous, no asset loading). Tinted per layer in the shader.
+const DRAW: Record<IconName, (ctx: Ctx) => void> = {
+  sun: (ctx) => {
+    ctx.save();
+    ctx.translate(64, 64);
+    ctx.beginPath();
+    ctx.arc(0, 0, 24, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.lineWidth = 9;
+    ctx.lineCap = 'round';
+    for (let i = 0; i < 8; i++) {
+      const a = (i * Math.PI) / 4;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(a) * 34, Math.sin(a) * 34);
+      ctx.lineTo(Math.cos(a) * 50, Math.sin(a) * 50);
+      ctx.stroke();
+    }
+    ctx.restore();
+  },
+  cloud: (ctx) => cloud(ctx, 74, 22),
+  rain: (ctx) => {
+    cloud(ctx, 58, 18);
+    ctx.lineWidth = 7;
+    ctx.lineCap = 'round';
+    for (const x of [50, 66, 82]) {
+      ctx.beginPath();
+      ctx.moveTo(x, 92);
+      ctx.lineTo(x - 4, 108);
+      ctx.stroke();
+    }
+  },
+  storm: (ctx) => {
+    cloud(ctx, 54, 17);
+    ctx.beginPath();
+    ctx.moveTo(72, 74);
+    ctx.lineTo(50, 104);
+    ctx.lineTo(64, 104);
+    ctx.lineTo(54, 122);
+    ctx.lineTo(88, 90);
+    ctx.lineTo(70, 90);
+    ctx.closePath();
+    ctx.fill();
+  },
+  snow: (ctx) => {
+    ctx.save();
+    ctx.translate(64, 64);
+    ctx.lineWidth = 9;
+    ctx.lineCap = 'round';
+    for (let i = 0; i < 3; i++) {
+      const a = (i * Math.PI) / 3;
+      ctx.beginPath();
+      ctx.moveTo(-Math.cos(a) * 38, -Math.sin(a) * 38);
+      ctx.lineTo(Math.cos(a) * 38, Math.sin(a) * 38);
+      ctx.stroke();
+    }
+    ctx.restore();
+  },
+  fog: (ctx) => {
+    ctx.lineWidth = 9;
+    ctx.lineCap = 'round';
+    const rows = [
+      [26, 102, 44],
+      [18, 110, 64],
+      [30, 98, 84],
+      [40, 88, 104],
+    ];
+    for (const [x1, x2, y] of rows) {
+      ctx.beginPath();
+      ctx.moveTo(x1, y);
+      ctx.lineTo(x2, y);
+      ctx.stroke();
+    }
+  },
+  volcano: (ctx) => {
+    ctx.beginPath();
+    ctx.moveTo(18, 108);
+    ctx.lineTo(48, 56);
+    ctx.lineTo(80, 56);
+    ctx.lineTo(110, 108);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(48, 56);
+    ctx.lineTo(57, 40);
+    ctx.lineTo(71, 40);
+    ctx.lineTo(80, 56);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalAlpha = 0.7;
+    for (const [x, y, r] of [
+      [64, 30, 10],
+      [49, 22, 7],
+      [79, 20, 7],
+    ] as const) {
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  },
+  flame: (ctx) => {
+    ctx.save();
+    ctx.translate(64, 70);
+    ctx.beginPath();
+    ctx.moveTo(0, -46);
+    ctx.bezierCurveTo(30, -12, 32, 10, 0, 42);
+    ctx.bezierCurveTo(-32, 10, -18, -6, -4, -16);
+    ctx.bezierCurveTo(2, -2, 12, -6, 6, -22);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  },
+  iss: (ctx) => {
+    ctx.fillRect(57, 57, 14, 14);
+    ctx.fillRect(18, 50, 30, 28);
+    ctx.fillRect(80, 50, 30, 28);
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(48, 64);
+    ctx.lineTo(57, 64);
+    ctx.moveTo(71, 64);
+    ctx.lineTo(80, 64);
+    ctx.stroke();
+  },
+  plane: (ctx) => {
+    ctx.save();
+    ctx.translate(64, 64);
+    ctx.rotate(-0.35);
+    ctx.beginPath();
+    ctx.moveTo(-46, 6);
+    ctx.lineTo(22, -8);
+    ctx.lineTo(42, -4);
+    ctx.lineTo(20, 2);
+    ctx.lineTo(2, 4);
+    ctx.lineTo(-6, 24);
+    ctx.lineTo(-16, 24);
+    ctx.lineTo(-12, 2);
+    ctx.lineTo(-32, 8);
+    ctx.lineTo(-40, 20);
+    ctx.lineTo(-46, 20);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  },
+};
+
+let cached: Texture | null = null;
+
+/** Build (once, synchronously) the icon atlas as a CanvasTexture. */
+export function getIconAtlas(): Texture {
   if (cached) return cached;
-  cached = (async () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = COLS * CELL;
-    canvas.height = ROWS * CELL;
-    const ctx = canvas.getContext('2d')!;
-    await Promise.all(
-      (Object.keys(SVG) as IconName[]).map(async (name) => {
-        const img = await rasterize(SVG[name]);
-        const idx = ICON[name];
-        ctx.drawImage(img, (idx % COLS) * CELL, Math.floor(idx / COLS) * CELL, CELL, CELL);
-      }),
-    );
-    const tex = new CanvasTexture(canvas);
-    tex.colorSpace = SRGBColorSpace;
-    tex.needsUpdate = true;
-    return tex;
-  })();
-  return cached;
+  const canvas = document.createElement('canvas');
+  canvas.width = COLS * CELL;
+  canvas.height = ROWS * CELL;
+  const ctx = canvas.getContext('2d')!;
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeStyle = '#ffffff';
+  for (const name of Object.keys(DRAW) as IconName[]) {
+    const idx = ICON[name];
+    ctx.save();
+    ctx.translate((idx % COLS) * CELL, Math.floor(idx / COLS) * CELL);
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#ffffff';
+    DRAW[name](ctx);
+    ctx.restore();
+  }
+  const tex = new CanvasTexture(canvas);
+  tex.colorSpace = SRGBColorSpace;
+  tex.needsUpdate = true;
+  cached = tex;
+  return tex;
 }
 
 export const ATLAS_COLS = COLS;

@@ -1,17 +1,17 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useFrame, type ThreeEvent } from '@react-three/fiber';
 import {
-  DoubleSide,
-  InstancedBufferAttribute,
+  BufferAttribute,
+  BufferGeometry,
+  DynamicDrawUsage,
   InstancedMesh,
   MeshBasicMaterial,
   Object3D,
-  PlaneGeometry,
+  Points,
   ShaderMaterial,
   SphereGeometry,
-  type Texture,
 } from 'three';
 import type { GeoPoint } from '@/lib/data/types';
 import { latLngToVector3 } from '@/lib/geo/coordinates';
@@ -21,98 +21,82 @@ import { ATLAS_COLS, ATLAS_ROWS, getIconAtlas } from '@/lib/icons/atlas';
 const MAX = 512;
 const dummy = new Object3D();
 
-function useAtlas(): Texture | null {
-  const [tex, setTex] = useState<Texture | null>(null);
-  useEffect(() => {
-    let mounted = true;
-    getIconAtlas().then((t) => mounted && setTex(t));
-    return () => {
-      mounted = false;
-    };
-  }, []);
-  return tex;
-}
-
 const vertexShader = /* glsl */ `
   attribute float aCell;
   attribute float aSize;
   attribute vec3 aTint;
-  attribute float aPhase;
-  uniform float uCols;
-  uniform float uRows;
-  uniform float uTime;
-  varying vec2 vUv;
+  varying float vCell;
   varying vec3 vTint;
   void main() {
-    vec4 center = modelViewMatrix * instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0);
-    float s = aSize * (1.0 + 0.06 * sin(uTime * 1.5 + aPhase));
-    center.xy += position.xy * s;
-    gl_Position = projectionMatrix * center;
-    float col = mod(aCell, uCols);
-    float row = floor(aCell / uCols);
-    vUv = (vec2(col, row) + vec2(uv.x, 1.0 - uv.y)) / vec2(uCols, uRows);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    gl_PointSize = aSize;
+    vCell = aCell;
     vTint = aTint;
   }
 `;
 
 const fragmentShader = /* glsl */ `
   uniform sampler2D uAtlas;
-  varying vec2 vUv;
+  uniform float uCols;
+  uniform float uRows;
+  varying float vCell;
   varying vec3 vTint;
   void main() {
-    vec4 t = texture2D(uAtlas, vUv);
-    if (t.a < 0.04) discard;
+    float col = mod(vCell, uCols);
+    float row = floor(vCell / uCols);
+    vec2 uv = (vec2(col, row) + vec2(gl_PointCoord.x, 1.0 - gl_PointCoord.y)) / vec2(uCols, uRows);
+    vec4 t = texture2D(uAtlas, uv);
+    if (t.a < 0.05) discard;
     gl_FragColor = vec4(vTint * t.rgb, t.a);
   }
 `;
 
-/** Instanced billboard icon sprites sampled from the icon atlas (one draw call).
- *  A hidden sphere proxy provides hover/click hit-testing. */
+/** Icon markers drawn as GPU point sprites sampled from the icon atlas (one
+ *  draw call). A hidden sphere proxy provides hover/click hit-testing. */
 export default function IconLayer({
   points,
   cellFor,
   tintFor,
-  size = 0.06,
+  pixelSize = 30,
 }: {
   points: GeoPoint[];
   cellFor: (p: GeoPoint) => number;
   tintFor: (p: GeoPoint) => [number, number, number];
-  size?: number;
+  pixelSize?: number;
 }) {
-  const atlas = useAtlas();
   const hover = useUIStore((s) => s.hover);
   const select = useUIStore((s) => s.select);
-  const uTime = useRef({ value: 0 });
 
-  const mesh = useMemo(() => {
-    const geo = new PlaneGeometry(1, 1);
-    const aCell = new Float32Array(MAX);
-    const aSize = new Float32Array(MAX).fill(size);
-    const aTint = new Float32Array(MAX * 3).fill(1);
-    const aPhase = new Float32Array(MAX);
-    for (let i = 0; i < MAX; i++) aPhase[i] = Math.random() * 6.283;
-    geo.setAttribute('aCell', new InstancedBufferAttribute(aCell, 1));
-    geo.setAttribute('aSize', new InstancedBufferAttribute(aSize, 1));
-    geo.setAttribute('aTint', new InstancedBufferAttribute(aTint, 3));
-    geo.setAttribute('aPhase', new InstancedBufferAttribute(aPhase, 1));
+  const sprites = useMemo(() => {
+    const geo = new BufferGeometry();
+    for (const [name, n] of [
+      ['position', 3],
+      ['aCell', 1],
+      ['aSize', 1],
+      ['aTint', 3],
+    ] as const) {
+      geo.setAttribute(
+        name,
+        new BufferAttribute(new Float32Array(MAX * n), n).setUsage(DynamicDrawUsage),
+      );
+    }
+    geo.setDrawRange(0, 0);
     const mat = new ShaderMaterial({
       vertexShader,
       fragmentShader,
       transparent: true,
       depthWrite: false,
-      side: DoubleSide,
       uniforms: {
-        uAtlas: { value: null },
+        uAtlas: { value: getIconAtlas() },
         uCols: { value: ATLAS_COLS },
         uRows: { value: ATLAS_ROWS },
-        uTime: uTime.current,
       },
     });
-    const m = new InstancedMesh(geo, mat, MAX);
-    m.count = 0;
-    m.frustumCulled = false;
-    return m;
-  }, [size]);
+    const p = new Points(geo, mat);
+    p.frustumCulled = false;
+    p.raycast = () => {};
+    return p;
+  }, []);
 
   const proxy = useMemo(() => {
     const m = new InstancedMesh(
@@ -126,54 +110,50 @@ export default function IconLayer({
   }, []);
 
   useEffect(() => {
-    if (atlas) (mesh.material as ShaderMaterial).uniforms.uAtlas.value = atlas;
-  }, [atlas, mesh]);
-
-  useEffect(() => {
-    const aCell = mesh.geometry.getAttribute('aCell') as InstancedBufferAttribute;
-    const aTint = mesh.geometry.getAttribute('aTint') as InstancedBufferAttribute;
+    const dpr =
+      typeof window !== 'undefined' ? Math.min(2, window.devicePixelRatio || 1) : 1;
+    const pos = sprites.geometry.getAttribute('position') as BufferAttribute;
+    const aCell = sprites.geometry.getAttribute('aCell') as BufferAttribute;
+    const aSize = sprites.geometry.getAttribute('aSize') as BufferAttribute;
+    const aTint = sprites.geometry.getAttribute('aTint') as BufferAttribute;
     const count = Math.min(points.length, MAX);
     for (let i = 0; i < count; i++) {
       const p = points[i];
-      const r = 1.01 + Math.min((p.alt ?? 0) / 6371, 0.08);
-      const pos = latLngToVector3(p.lat, p.lng, r);
-      dummy.position.copy(pos);
-      dummy.scale.set(1, 1, 1);
-      dummy.rotation.set(0, 0, 0);
-      dummy.updateMatrix();
-      mesh.setMatrixAt(i, dummy.matrix);
-      dummy.scale.setScalar(size * 0.8);
-      dummy.updateMatrix();
-      proxy.setMatrixAt(i, dummy.matrix);
+      const r = 1.012 + Math.min((p.alt ?? 0) / 6371, 0.08);
+      const v = latLngToVector3(p.lat, p.lng, r);
+      pos.setXYZ(i, v.x, v.y, v.z);
       aCell.setX(i, cellFor(p));
+      aSize.setX(i, pixelSize * dpr);
       const [tr, tg, tb] = tintFor(p);
       aTint.setXYZ(i, tr, tg, tb);
+
+      dummy.position.copy(v);
+      dummy.scale.setScalar(0.03);
+      dummy.updateMatrix();
+      proxy.setMatrixAt(i, dummy.matrix);
     }
-    mesh.count = count;
-    proxy.count = count;
-    mesh.instanceMatrix.needsUpdate = true;
-    proxy.instanceMatrix.needsUpdate = true;
+    sprites.geometry.setDrawRange(0, count);
+    pos.needsUpdate = true;
     aCell.needsUpdate = true;
+    aSize.needsUpdate = true;
     aTint.needsUpdate = true;
-  }, [points, mesh, proxy, cellFor, tintFor, size]);
+    proxy.count = count;
+    proxy.instanceMatrix.needsUpdate = true;
+  }, [points, sprites, proxy, cellFor, tintFor, pixelSize]);
 
   useEffect(
     () => () => {
-      mesh.geometry.dispose();
-      (mesh.material as ShaderMaterial).dispose();
+      sprites.geometry.dispose();
+      (sprites.material as ShaderMaterial).dispose();
       proxy.geometry.dispose();
       (proxy.material as MeshBasicMaterial).dispose();
     },
-    [mesh, proxy],
+    [sprites, proxy],
   );
-
-  useFrame((_, dt) => {
-    uTime.current.value += dt;
-  });
 
   return (
     <>
-      <primitive object={mesh} />
+      <primitive object={sprites} />
       <primitive
         object={proxy}
         onPointerMove={(e: ThreeEvent<PointerEvent>) => {
