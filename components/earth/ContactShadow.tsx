@@ -12,6 +12,7 @@ export default function ContactShadow() {
       blur={2.8}
       far={2}
       color="#18181b"
+      frames={1}
     />
   );
 }
