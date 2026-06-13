@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-export type GlobeStyle = 'realistic' | 'illustrated' | 'atlas' | 'glass' | 'sculpture' | 'infrared' | 'parchment';
+export type GlobeStyle = 'realistic' | 'illustrated' | 'atlas' | 'glass' | 'sculpture' | 'infrared' | 'parchment' | 'blueprint';
 
 interface GlobeStyleStore {
   style: GlobeStyle;

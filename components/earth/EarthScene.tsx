@@ -9,6 +9,8 @@ import EarthAtlas from './EarthAtlas';
 import EarthGlass from './EarthGlass';
 import EarthSculpture from './EarthSculpture';
 import EarthInfrared from './EarthInfrared';
+import EarthParchment from './EarthParchment';
+import EarthBlueprint from './EarthBlueprint';
 
 /** Renders the Earth in the currently selected visual style. */
 export default function EarthScene() {
@@ -48,6 +50,12 @@ export default function EarthScene() {
         <Atmosphere />
       </>
     );
+  }
+  if (style === 'parchment') {
+    return <EarthParchment />;
+  }
+  if (style === 'blueprint') {
+    return <EarthBlueprint />;
   }
   return (
     <>
