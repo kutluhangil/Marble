@@ -40,6 +40,9 @@ International Space Station, city weather, volcanoes, wildfires, and flights** �
 rendered as its own recognizable, animated visual rather than a generic dot. Click anything
 to open a rich, museum-style information panel.
 
+Eight distinct rendering styles let you see the same planet through radically different
+artistic lenses — from NASA satellite photography to 17th-century cartography.
+
 ---
 
 <details>
@@ -57,7 +60,64 @@ Bu yüzeyin üzerine MARBLE, dünyayı olduğu gibi çizer: **depremler, Uluslar
 nokta yerine kendine özgü, animasyonlu bir görsel olarak işlenir. Herhangi bir nesneye
 tıklayarak zengin, müze tarzı bir bilgi paneli açın.
 
+Sekiz farklı render stili aynı gezegenin radikale farklı sanatsal merceklarle görülmesini sağlar.
+
 </details>
+
+---
+
+## 🌍 Globe Gallery
+
+Eight handcrafted rendering styles — switch between them instantly with a single click.
+
+<br />
+
+### 🛰️ Realistic
+*NASA Blue Marble + Black Marble city lights, PBR shading, real-time day/night terminator*
+
+<img src="public/screenshots/globe-realistic.png" alt="Realistic Globe" width="100%" />
+
+---
+
+### 🎨 Illustrated
+*Cel-shaded, hand-painted aesthetic with stylized ocean and land colours*
+
+<img src="public/screenshots/globe-illustrated.png" alt="Illustrated Globe" width="100%" />
+
+---
+
+### 💎 Glass / Crystal
+*Frosted glass and crystal transmission material — semi-transparent with physical refraction*
+
+<img src="public/screenshots/globe-glass.png" alt="Glass Crystal Globe" width="100%" />
+
+---
+
+### 🏛️ Sculpture
+*Travertine plaster — single-colour matte material revealing topography through light and shadow only*
+
+<img src="public/screenshots/globe-sculpture.png" alt="Sculpture Globe" width="100%" />
+
+---
+
+### 🌡️ Infrared Biosphere
+*Artistic heatmap palette inspired by NASA SST / chlorophyll data — terracotta, sage, charcoal*
+
+<img src="public/screenshots/globe-infrared.png" alt="Infrared Biosphere Globe" width="100%" />
+
+---
+
+### 🗺️ Parchment / Antique Map
+*17th-century cartographic style — aged parchment, sepia ink coastlines, engraved ocean textures*
+
+<img src="public/screenshots/globe-parchment.png" alt="Parchment Antique Globe" width="100%" />
+
+---
+
+### 📐 Blueprint / Wireframe
+*Architectural schematic — warm-gray contour lines and dot-matrix landmasses on paper-white*
+
+<img src="public/screenshots/globe-blueprint.png" alt="Blueprint Wireframe Globe" width="100%" />
 
 ---
 
@@ -65,15 +125,30 @@ tıklayarak zengin, müze tarzı bir bilgi paneli açın.
 
 | Feature | Description |
 |---------|-------------|
-| 🌍 **Hyper-realistic Earth** | NASA Blue Marble albedo, relief & roughness maps, Black Marble city lights, animated clouds, and a faint daylight atmosphere under studio lighting |
+| 🌍 **8 Globe Styles** | Realistic · Illustrated · Atlas · Glass · Sculpture · Infrared · Parchment · Blueprint — switch instantly |
+| 🛰️ **Hyper-realistic Earth** | NASA Blue Marble albedo, relief & roughness maps, Black Marble city lights, animated clouds, and atmosphere under studio lighting |
 | 🌗 **Real-time terminator** | Day/night line computed from the actual date & time, with a draggable sun scrubber to sweep it across the globe |
 | 📡 **Living data layers** | Earthquakes, ISS, weather, volcanoes, wildfires, flights — each with its own visual language, not dots |
 | 🛰️ **ISS orbital tracking** | Spacecraft sprite + always-visible orbit tube + live trail of where it has been |
 | 🌊 **Seismic wavefronts** | Earthquakes render as expanding waves scaled by magnitude — M2 and M8 never look alike |
-| 🎨 **Globe styles** | Switch between Realistic, Illustrated (cel-shaded), and Atlas (cartographic) renderings |
 | 🪟 **Museum info panels** | Click any object for enriched stats, Wikipedia imagery, ISS crew, magnitude context, nearest city, and source attribution |
 | 🌓 **Light & dark · TR/EN** | Editorial light and dark themes, full Turkish/English localization |
 | 🔗 **Share & export** | Shareable view URLs (style + layers + sun) and one-click PNG capture |
+
+---
+
+## 🎨 Globe Style Technical Details
+
+| Style | Material | Key Technique |
+|-------|----------|---------------|
+| **Realistic** | `MeshStandardMaterial` + custom GLSL | Blue Marble albedo, PBR roughness split, Black Marble night lights |
+| **Illustrated** | `MeshToonMaterial` + custom shader | Cel-shading with stylized palette and contour edges |
+| **Atlas** | `MeshStandardMaterial` | Classic cartographic colours, political boundaries |
+| **Glass** | `MeshPhysicalMaterial` | `transmission`, `roughness` mask, physical refraction |
+| **Sculpture** | `MeshStandardMaterial` | No albedo — pure normal map depth + strong AO, warm plaster tone |
+| **Infrared** | Custom fragment shader | Artistic SST/chlorophyll palette (terracotta → sage → charcoal) |
+| **Parchment** | `MeshStandardMaterial` + canvas texture | Aged parchment albedo, sepia normal ink, engraved ocean pattern |
+| **Blueprint** | Custom vertex/fragment shader | Procedural contour lines from elevation map, warm-gray ink on paper-white |
 
 ---
 
@@ -103,7 +178,15 @@ Marble/
 │   └── api/                  # cached proxy routes (earthquakes, iss, weather,
 │                             #   volcanoes, fires, flights, crew)
 ├── components/
-│   ├── earth/                # Earth, Clouds, Atmosphere, Lighting, styles, Globe
+│   ├── earth/                # Globe.tsx orchestrator + per-style components:
+│   │   ├── EarthRealistic.tsx   #   NASA PBR + GLSL day/night
+│   │   ├── EarthIllustrated.tsx #   cel-shaded toon
+│   │   ├── EarthAtlas.tsx       #   cartographic
+│   │   ├── EarthGlass.tsx       #   crystal transmission
+│   │   ├── EarthSculpture.tsx   #   plaster normal-map
+│   │   ├── EarthInfrared.tsx    #   heatmap shader
+│   │   ├── EarthParchment.tsx   #   antique parchment
+│   │   └── EarthBlueprint.tsx   #   wireframe schematic
 │   ├── layers/               # IconLayer, SeismicLayer, ISSLayer, FocusPlume
 │   ├── landing/              # Nav, Hero, pills, stats, scrubber, actions, footer
 │   ├── ui/                   # InfoPanel
@@ -113,7 +196,9 @@ Marble/
 │   ├── textures/ · icons/    # texture loader, SVG icon atlas
 │   └── i18n/ · utils/        # dictionary (TR/EN), helpers
 ├── store/                    # Zustand stores (globe, layers, data, ui, …)
-├── public/textures/          # optimized NASA maps (committed)
+├── public/
+│   ├── textures/             # optimized NASA maps (committed)
+│   └── screenshots/          # globe style preview images
 ├── scripts/                  # fetch-textures, make-og
 └── docs/                     # specs · plans · research
 ```
@@ -173,11 +258,24 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 ## 🔬 The Realism Breakdown
 
-The Earth uses a `MeshStandardMaterial` extended via `onBeforeCompile`: Blue Marble albedo,
+The **Realistic** globe uses a `MeshStandardMaterial` extended via `onBeforeCompile`: Blue Marble albedo,
 normal-mapped relief, a roughness split (reflective oceans / matte land), Black Marble city
 lights gated to the night side by the real-time sun, ocean sun-glint, cloud shadows, a
 separate animated cloud shell, and a delicate daylight atmosphere — all under 3-point studio
 lighting with ACES tone mapping.
+
+The **Glass** globe uses `MeshPhysicalMaterial` with full transmission, chromatic aberration,
+and a roughness mask to separate crystalline oceans from frosted-glass landmasses.
+
+The **Sculpture** globe removes all albedo and relies purely on high-depth normal maps and
+ambient occlusion to reveal mountain ranges (Andes, Himalayas) through chiaroscuro lighting alone.
+
+The **Infrared** globe uses a custom fragment shader that maps terrain elevation and biome
+data through an artistic colour ramp — terracotta orange → sage green → coal grey —
+inspired by NASA SST and chlorophyll satellite imagery.
+
+The **Parchment** and **Blueprint** globes use procedural GLSL to generate aged parchment
+grain and architectural contour lines respectively, without any pre-baked textures.
 
 ---
 
@@ -186,9 +284,10 @@ lighting with ACES tone mapping.
 - [x] Hyper-realistic Earth — day/night, clouds, atmosphere, studio lighting
 - [x] Real-time data layers with per-layer visual identity
 - [x] ISS orbital tracking · seismic wavefronts · weather/volcano/fire icons
-- [x] Globe styles · light/dark · TR/EN · time scrubber
+- [x] Globe styles (8 total) · light/dark · TR/EN · time scrubber
 - [x] Universal info panels with Wikipedia enrichment
 - [x] Shareable URLs · PNG export · Vercel deploy
+- [x] Glass · Sculpture · Infrared · Parchment · Blueprint styles
 - [ ] Aurora oval (NOAA SWPC)
 - [ ] EONET expansion — storms, dust, floods, sea ice, drought
 - [ ] Air quality layer (Open-Meteo)
