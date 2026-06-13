@@ -62,7 +62,7 @@ export default function EarthIllustrated() {
 
   return (
     <mesh material={material}>
-      <sphereGeometry args={[1, 128, 128]} />
+      <sphereGeometry args={[1, 80, 80]} />
     </mesh>
   );
 }

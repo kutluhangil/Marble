@@ -16,7 +16,7 @@ export default function EarthSculpture() {
   return (
     <mesh>
       <sphereGeometry
-        args={[1, 128, 128]}
+        args={[1, 80, 80]}
         onUpdate={(self) => {
           if (!self.attributes.uv2) {
             self.setAttribute('uv2', self.attributes.uv);

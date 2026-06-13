@@ -61,15 +61,16 @@ export default function EarthParchment() {
            float inkLine = smoothstep(0.03, 0.12, grad);
            
            // 5. Concentric Shoreline Ripples / Wave Engravings (classic 17th Century style)
+           // Optimized: 2 iterations (was 4) to halve texture fetches without visual loss.
            float ripples = 0.0;
-           for (int i = 1; i <= 4; i++) {
-             float dist = float(i) * 0.0028;
+           for (int i = 1; i <= 2; i++) {
+             float dist = float(i) * 0.004;
              float rN = texture2D(roughnessMap, vMapUv + vec2(0.0, dist)).r;
              float rS = texture2D(roughnessMap, vMapUv + vec2(0.0, -dist)).r;
              float rE = texture2D(roughnessMap, vMapUv + vec2(dist, 0.0)).r;
              float rW = texture2D(roughnessMap, vMapUv + vec2(-dist, 0.0)).r;
              float rippleGrad = abs(rN - rS) + abs(rE - rW);
-             ripples += smoothstep(0.05, 0.22, rippleGrad) * (1.0 - float(i)/5.0);
+             ripples += smoothstep(0.05, 0.22, rippleGrad) * (1.0 - float(i)/3.0);
            }
            
            // 6. Sepia Land Shading (faded ink wash)
@@ -97,7 +98,7 @@ export default function EarthParchment() {
   return (
     <group>
       <mesh material={material}>
-        <sphereGeometry args={[1, 128, 128]} />
+        <sphereGeometry args={[1, 80, 80]} />
       </mesh>
       <Graticule />
     </group>

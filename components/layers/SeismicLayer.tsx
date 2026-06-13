@@ -23,6 +23,7 @@ const MAX = 512;
 const UP = new Vector3(0, 1, 0);
 const tmpT = new Vector3();
 const tmpB = new Vector3();
+const tmpS = new Vector3();
 
 const vertexShader = /* glsl */ `
   attribute float aMag;
@@ -117,12 +118,12 @@ export default function SeismicLayer({ points }: { points: GeoPoint[] }) {
       const scale = 0.05 + mag * 0.022;
       matrix.makeBasis(tmpT, tmpB, normal);
       matrix.setPosition(pos.x, pos.y, pos.z);
-      matrix.scale(new Vector3(scale, scale, 1));
+      matrix.scale(tmpS.set(scale, scale, 1));
       mesh.setMatrixAt(i, matrix);
 
-      const pm = new Matrix4().makeScale(scale * 0.5, scale * 0.5, scale * 0.5);
-      pm.setPosition(pos.x, pos.y, pos.z);
-      proxy.setMatrixAt(i, pm);
+      matrix.makeScale(scale * 0.5, scale * 0.5, scale * 0.5);
+      matrix.setPosition(pos.x, pos.y, pos.z);
+      proxy.setMatrixAt(i, matrix);
 
       aMag.setX(i, mag);
       aPhase.setX(i, Math.random() * 6.283);

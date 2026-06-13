@@ -47,7 +47,7 @@ export default function Atmosphere() {
 
   return (
     <mesh material={material}>
-      <sphereGeometry args={[1.015, 64, 64]} />
+      <sphereGeometry args={[1.015, 48, 48]} />
     </mesh>
   );
 }

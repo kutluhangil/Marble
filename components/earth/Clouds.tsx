@@ -39,7 +39,7 @@ export default function Clouds() {
 
   return (
     <mesh ref={ref} material={material}>
-      <sphereGeometry args={[1.003, 96, 96]} />
+      <sphereGeometry args={[1.003, 64, 64]} />
     </mesh>
   );
 }

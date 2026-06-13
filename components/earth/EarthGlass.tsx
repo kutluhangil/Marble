@@ -15,7 +15,7 @@ export default function EarthGlass() {
   return (
     <group>
       <mesh>
-        <sphereGeometry args={[1, 128, 128]} />
+        <sphereGeometry args={[1, 80, 80]} />
         <MeshTransmissionMaterial
           roughness={0.9}
           roughnessMap={tex.roughness}

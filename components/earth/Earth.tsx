@@ -88,7 +88,7 @@ export default function Earth() {
   const ref = useRef(null);
   return (
     <mesh ref={ref} material={material}>
-      <sphereGeometry args={[1, 128, 128]} />
+      <sphereGeometry args={[1, 80, 80]} />
     </mesh>
   );
 }

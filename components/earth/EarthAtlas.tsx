@@ -48,7 +48,7 @@ export default function EarthAtlas() {
   return (
     <group>
       <mesh material={material}>
-        <sphereGeometry args={[1, 128, 128]} />
+        <sphereGeometry args={[1, 80, 80]} />
       </mesh>
       <Graticule />
     </group>

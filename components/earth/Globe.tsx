@@ -101,11 +101,10 @@ export default function Globe() {
   return (
     <Canvas
       camera={{ position: [0, 0, 3.5], fov: 35 }}
-      dpr={[1, 2]}
+      dpr={[1, 1.5]}
       gl={{
         antialias: true,
         toneMapping: ACESFilmicToneMapping,
-        preserveDrawingBuffer: true,
       }}
     >
       <Suspense fallback={null}>

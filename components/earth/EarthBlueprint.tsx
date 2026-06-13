@@ -50,15 +50,10 @@ export default function EarthBlueprint() {
            float dotMask = smoothstep(0.25, 0.15, dots) * 0.35; // clean micro dots
            float landDots = dotMask * smoothstep(0.42, 0.5, baseHeight);
            
-           // 5. Razor-sharp coastline outlines via local derivative
-           float texelSize = 1.0 / 2048.0;
-           float lC = texture2D(roughnessMap, vMapUv).r;
-           float lL = texture2D(roughnessMap, vMapUv + vec2(-texelSize, 0.0)).r;
-           float lR = texture2D(roughnessMap, vMapUv + vec2(texelSize, 0.0)).r;
-           float lU = texture2D(roughnessMap, vMapUv + vec2(0.0, -texelSize)).r;
-           float lD = texture2D(roughnessMap, vMapUv + vec2(0.0, texelSize)).r;
-           float grad = abs(lC - lL) + abs(lC - lR) + abs(lC - lU) + abs(lC - lD);
-           float landOutline = smoothstep(0.04, 0.15, grad);
+           // 5. Razor-sharp coastline outlines via GPU screen-space derivatives
+           // dFdx/dFdy are free — they use values already computed by neighbouring fragments.
+           float grad = abs(dFdx(baseHeight)) + abs(dFdy(baseHeight));
+           float landOutline = smoothstep(0.008, 0.03, grad);
            
            // 6. Warm architectural paper-white and charcoal gray ink tones
            vec3 paperColor = vec3(0.96, 0.95, 0.93); // #f5f2ed warm architectural paper
@@ -89,7 +84,7 @@ export default function EarthBlueprint() {
     <group>
       {/* 1. Base Map with contours and dot matrix */}
       <mesh material={material}>
-        <sphereGeometry args={[1, 128, 128]} />
+      <sphereGeometry args={[1, 80, 80]} />
       </mesh>
       
       {/* 2. Outer Technical Wireframe Grid Shell */}

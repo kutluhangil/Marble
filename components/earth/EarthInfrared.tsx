@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useEarthTextures } from '@/lib/textures/loader';
 import { Vector2, MeshStandardMaterial } from 'three';
@@ -94,7 +94,7 @@ export default function EarthInfrared() {
 
   return (
     <mesh material={material}>
-      <sphereGeometry args={[1, 128, 128]} />
+      <sphereGeometry args={[1, 80, 80]} />
     </mesh>
   );
 }
