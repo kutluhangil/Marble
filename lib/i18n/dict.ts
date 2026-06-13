@@ -34,7 +34,7 @@ export interface Dict {
   };
   built: { title: string; body: string };
   footer: { tagline: string };
-  style: { realistic: string; illustrated: string; atlas: string; glass: string; sculpture: string };
+  style: { realistic: string; illustrated: string; atlas: string; glass: string; sculpture: string; infrared: string; parchment: string };
   time: { caption: string; now: string };
   actions: { share: string; copied: string; screenshot: string };
   theme: { toggle: string };
@@ -143,7 +143,7 @@ const en: Dict = {
     body: 'Three.js · React Three Fiber · custom PBR shading · NASA Blue Marble and Black Marble imagery · a real-time solar terminator · USGS · Open-Meteo · OpenSky.',
   },
   footer: { tagline: 'A live portrait of Earth' },
-  style: { realistic: 'Realistic', illustrated: 'Illustrated', atlas: 'Atlas', glass: 'Glass', sculpture: 'Sculpture' },
+  style: { realistic: 'Realistic', illustrated: 'Illustrated', atlas: 'Atlas', glass: 'Glass', sculpture: 'Sculpture', infrared: 'Infrared', parchment: 'Parchment' },
   time: { caption: 'Sun', now: 'now' },
   actions: { share: 'Share', copied: 'Copied!', screenshot: 'Save PNG' },
   theme: { toggle: 'Toggle theme' },
@@ -309,7 +309,7 @@ const tr: Dict = {
     body: 'Three.js · React Three Fiber · özel PBR gölgeleme · NASA Blue Marble ve Black Marble görüntüleri · gerçek zamanlı gündoğumu çizgisi · USGS · Open-Meteo · OpenSky.',
   },
   footer: { tagline: 'Dünya’nın canlı portresi' },
-  style: { realistic: 'Gerçekçi', illustrated: 'İllüstrasyon', atlas: 'Atlas', glass: 'Buzlu Cam', sculpture: 'Heykel' },
+  style: { realistic: 'Gerçekçi', illustrated: 'İllüstrasyon', atlas: 'Atlas', glass: 'Buzlu Cam', sculpture: 'Heykel', infrared: 'Kızılötesi', parchment: 'Parşömen' },
   time: { caption: 'Güneş', now: 'şimdi' },
   actions: { share: 'Paylaş', copied: 'Kopyalandı!', screenshot: 'PNG kaydet' },
   theme: { toggle: 'Temayı değiştir' },
