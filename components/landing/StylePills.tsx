@@ -4,7 +4,7 @@ import { useGlobeStyleStore, type GlobeStyle } from '@/store/useGlobeStyleStore'
 import { useT } from '@/lib/i18n/useT';
 import { cn } from '@/lib/utils/cn';
 
-const STYLES: GlobeStyle[] = ['realistic', 'illustrated', 'atlas'];
+const STYLES: GlobeStyle[] = ['realistic', 'illustrated', 'atlas', 'glass'];
 
 export default function StylePills() {
   const t = useT();

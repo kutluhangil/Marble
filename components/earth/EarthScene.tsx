@@ -6,6 +6,7 @@ import Clouds from './Clouds';
 import Atmosphere from './Atmosphere';
 import EarthIllustrated from './EarthIllustrated';
 import EarthAtlas from './EarthAtlas';
+import EarthGlass from './EarthGlass';
 
 /** Renders the Earth in the currently selected visual style. */
 export default function EarthScene() {
@@ -21,6 +22,14 @@ export default function EarthScene() {
   }
   if (style === 'atlas') {
     return <EarthAtlas />;
+  }
+  if (style === 'glass') {
+    return (
+      <>
+        <EarthGlass />
+        <Atmosphere />
+      </>
+    );
   }
   return (
     <>
