@@ -43,7 +43,7 @@ const fragmentShader = /* glsl */ `
   varying vec3 vTint;
   void main() {
     float col = mod(vCell, uCols);
-    float row = floor(vCell / uCols);
+    float row = uRows - 1.0 - floor(vCell / uCols);
     vec2 uv = (vec2(col, row) + vec2(gl_PointCoord.x, 1.0 - gl_PointCoord.y)) / vec2(uCols, uRows);
     vec4 t = texture2D(uAtlas, uv);
     if (t.a < 0.05) discard;
