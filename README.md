@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/media/hero.svg" alt="MARBLE — a live portrait of Earth, rendered as a museum piece" width="100%">
+<img src="docs/media/hero.svg" alt="MARBLE — a globe on a plinth with the terminator moving, seismic wavefronts, the ISS and a museum panel, switching from realistic to parchment to blueprint" width="100%">
 
 <p>
   <a href="https://marble-drab-delta.vercel.app"><img alt="Live demo" src="https://img.shields.io/badge/live%20demo-see%20the%20planet-4a90d9?style=for-the-badge&labelColor=0b1220"></a>
@@ -71,6 +71,35 @@ Realistic, Illustrated, Atlas, Glass, Sculpture, Infrared, Parchment and Bluepri
 
 <img src="docs/media/divider.svg" width="100%" alt="">
 
+## Each layer speaks its own language
+
+Dots on a globe all look the same. MARBLE gives every kind of event a form that says what it is:
+
+| Layer | How it is drawn | Why |
+|---|---|---|
+| **Earthquakes** | Procedural expanding wavefronts in one draw call. A small quake is one faint ring; a strong one spawns more, larger, brighter fronts. | M2 and M8 must never look alike. |
+| **ISS** | A spacecraft sprite, an always-visible orbit tube for the full trajectory and a live trail of where it has been. | Position alone hides where it is going. |
+| **Weather** | 28 cities with current Open-Meteo readings. | A few well-chosen points read better than a field of numbers. |
+| **Volcanoes · wildfires · flights** | Icons from a single texture atlas, drawn in one call, with a hidden sphere proxy for hover and click. | Hundreds of markers without hundreds of draw calls. |
+| **Flights** | OpenSky traffic within a European bounding box. | The busiest airspace reads well and keeps the payload small. |
+
+Everything is pinned to the rotating world group, so markers stay on their geography while the planet turns.
+
+<img src="docs/media/divider.svg" width="100%" alt="">
+
+## Under the glass
+
+| Piece | Detail |
+|---|---|
+| **Surface** | `MeshStandardMaterial` with Blue Marble albedo, relief and a roughness split for land and ocean. An `onBeforeCompile` patch lights the Black Marble city lights only on the night side, from the real sun direction. |
+| **Sun** | The subsolar point is computed from the date and time; the terminator is real and the sun scrubber moves it. |
+| **Clouds** | A separate shell just above the surface, alpha from a white-on-black cloud map, with a slow extra spin for parallax. Its rotation is shared with the Earth shader so cloud shadows line up. |
+| **Atmosphere and stage** | An atmosphere rim, a graticule for the cartographic styles and a contact shadow on the page. |
+| **Museum panels** | Click anything for enriched stats, the nearest city (haversine), ISS crew and a Wikipedia summary and image, cached per language and title. |
+| **Tests** | Great-circle arcs, coordinate conversion, the sun position and data normalisation are unit-tested with Vitest. |
+
+<img src="docs/media/divider.svg" width="100%" alt="">
+
 ## Türkçe özet
 
 **MARBLE**, temiz ve editoryal bir sayfada yavaşça dönen hiper-gerçekçi bir Dünya. NASA görüntüleri, özel PBR gölgeleme, gerçek zamanlı gece-gündüz çizgisi ve ayrı bir bulut katmanı sayesinde render mı fotoğraf mı ayırt etmek zor. Üzerinde depremler, ISS, hava durumu, volkanlar, yangınlar ve uçuşlar canlı olarak, her biri kendi görsel diliyle çiziliyor. Sekiz farklı küre stili, açık/koyu tema ve Türkçe/İngilizce arayüzü var.
@@ -99,5 +128,5 @@ store/                zustand stores for globe, layers, time, theme, language
 <div align="center">
 <br>
 <a href="https://github.com/kutluhangil"><img src="docs/media/signature.svg" width="100%" alt="Built by kutluhangil"></a>
-<sub>Imagery from NASA Blue Marble and Black Marble · data from USGS, NASA EONET, Open-Meteo and OpenSky.</sub>
+<sub>Imagery from NASA Blue Marble and Black Marble · data from USGS, NASA EONET, Open-Meteo and OpenSky. · values in the banner are illustrative.</sub>
 </div>
