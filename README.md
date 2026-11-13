@@ -128,5 +128,5 @@ store/                zustand stores for globe, layers, time, theme, language
 <div align="center">
 <br>
 <a href="https://github.com/kutluhangil"><img src="docs/media/signature.svg" width="100%" alt="Built by kutluhangil"></a>
-<sub>Imagery from NASA Blue Marble and Black Marble · data from USGS, NASA EONET, Open-Meteo and OpenSky. · values in the banner are illustrative.</sub>
+<sub>Imagery from NASA Blue Marble and Black Marble · data from USGS, NASA EONET, Open-Meteo and OpenSky · values in the banner are illustrative.</sub>
 </div>
